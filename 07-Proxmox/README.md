@@ -1,8 +1,8 @@
 # Proxmox
 
-Proxmox hosts the NorthStar Windows Server infrastructure.
+Proxmox is hosting the Windows Server side of NorthStar.
 
-## Current virtual machines
+## Current VMs
 
 ### DC01
 - Windows Server
@@ -15,12 +15,15 @@ Proxmox hosts the NorthStar Windows Server infrastructure.
 ### FS01
 - Windows Server
 - 10.0.20.4
-- dedicated file server
+- file server
 
-## Networking lesson learned
+## One thing I learned the hard way
 
-The physical switchport connected to the Proxmox host is configured as an **access port in VLAN 20**. Because the switch performs the VLAN assignment, VM NICs using the same untagged bridge path should not also be tagged as VLAN 20 in Proxmox.
+The physical switchport connected to Proxmox is already an **access port in VLAN 20**.
 
-During FS01 deployment, adding VLAN tag 20 inside Proxmox caused connectivity failure. Removing the Proxmox VLAN tag restored gateway and Internet connectivity.
+I originally added VLAN tag 20 to FS01 inside Proxmox too, which killed connectivity. Once I removed the VM-level VLAN tag, FS01 could reach the gateway and domain again.
 
-This incident is documented in the troubleshooting section.
+So for this setup, the VM NICs on `vmbr0` are staying untagged and the physical switchport handles the VLAN assignment.
+
+I wrote up the full issue here:
+[Proxmox VLAN tagging mismatch](../08-Troubleshooting/proxmox-vlan-tagging.md)
