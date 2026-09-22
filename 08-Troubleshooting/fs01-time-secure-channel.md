@@ -1,46 +1,56 @@
-# FS01 Time Synchronization and Secure Channel Failure
+# FS01 Time / Secure Channel Failure
 
-## Symptoms
+This was one of the weirder problems I've hit so far.
 
-FS01 experienced several domain-related failures:
-- computer-side `gpupdate /force` failed
-- SMB/domain access produced clock synchronization errors
-- secure-channel verification returned `ERROR_ACCESS_DENIED`
-- FS01's system date was discovered to be set to the year **3964**
+## What I saw
 
-## Investigation
+FS01 started having domain problems even though the network itself looked fine.
 
-Basic network connectivity to DC01 was available.
+Symptoms included:
+- computer-side `gpupdate /force` failing
+- SMB access complaining about clock synchronization
+- secure-channel verification returning `ERROR_ACCESS_DENIED`
+- FS01 somehow showing the year **3964**
 
-Tests included:
-- DNS resolution of DC01
-- TCP 445 connectivity
-- TCP 389 connectivity
-- domain-controller discovery
-- `w32tm /stripchart` against 10.0.20.3
-- secure-channel verification
+## What I checked
 
-The NTP stripchart showed that FS01 could receive time data from DC01, proving that basic NTP transport was functioning.
+I didn't want to assume it was just "the network," so I checked the pieces separately.
 
-## Root cause
+Things that worked:
+- DNS could find DC01
+- TCP 445 to DC01 worked
+- TCP 389 to DC01 worked
+- domain-controller discovery worked
 
-FS01's system clock was drastically incorrect. The extreme clock skew disrupted domain authentication and contributed to Kerberos / secure-channel failures.
+I also ran:
 
-## Resolution
+```cmd
+w32tm /stripchart /computer:10.0.20.3 /dataonly /samples:5
+```
 
-1. The FS01 date/time was brought back into a sane range.
-2. Windows Time was synchronized again.
-3. The computer secure channel to the NORTH domain was repaired.
-4. Group Policy processing was retried successfully.
-5. FS01 was returned to the normal Active Directory domain time hierarchy.
+That actually returned time data, so NTP traffic itself was getting through.
 
-## Validation
+The offset was enormous because FS01 thought it was in the year 3964.
 
-After repair:
-- the secure-channel repair succeeded
-- `gpupdate /force` succeeded
-- domain connectivity was restored
+## What was actually wrong
 
-## Lesson learned
+The clock was so far off that normal domain authentication was breaking.
 
-Accurate time is a foundational Active Directory dependency. A system can have working IP connectivity, DNS, LDAP, and SMB ports while domain authentication still fails because Kerberos depends heavily on synchronized time.
+That explained why the machine could still reach DC01 on the network but computer-side Group Policy and domain trust operations were failing.
+
+## Fix
+
+I got the clock back into a sane range first, then got Windows Time working again.
+
+After that I repaired the computer secure channel back to the domain.
+
+Once the secure channel was fixed:
+- `gpupdate /force` worked again
+- domain access came back
+- FS01 could go back to using the normal AD time hierarchy
+
+## What I learned
+
+Working IP connectivity does not mean Active Directory is healthy.
+
+In this case DNS, LDAP, SMB ports, and NTP transport could all be reachable while Kerberos / machine trust was still broken because the clock was completely wrong.
