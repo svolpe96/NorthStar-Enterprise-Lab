@@ -1,19 +1,22 @@
-# Device Configurations
+# Device Configs
 
-This folder will contain sanitized configuration backups and rebuild documentation for NorthStar network devices.
+I want to use this folder for sanitized copies of the real device configs once I finish rebuilding and cleaning them up.
 
-Planned files:
+Planned:
 - `CORESW1.txt`
 - `ASW1.txt`
 - `ASW2.txt`
 - `R1.txt`
 - `R2.txt`
 
-## Publishing rules
+Before anything goes public I'm going to strip out passwords, secrets, private key material, serial numbers I don't need, and anything else that shouldn't be published.
 
-Before publishing any configuration:
-- remove passwords and secrets
-- do not publish RSA private key material
-- remove unnecessary serial numbers or identifying information
-- review public/WAN addressing before publishing
-- keep useful interface, VLAN, routing, STP, EtherChannel, NTP, and management configuration
+The goal is to keep the useful stuff like:
+- interfaces
+- VLANs
+- trunks
+- EtherChannels
+- STP
+- routing
+- NTP
+- SSH / management config
