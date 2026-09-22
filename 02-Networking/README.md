@@ -1,45 +1,42 @@
 # Networking
 
-NorthStar uses a hierarchical switching/routing design with a Layer 3 core and Layer 2 access switches.
+I'm using CORESW1 for the Layer 3 side of the lab and keeping ASW1/ASW2 as Layer 2 access switches.
 
-## Implemented
+## What is working so far
 
 - VLAN segmentation
 - SVIs on CORESW1
 - inter-VLAN routing
 - Rapid PVST+
-- CORESW1 configured as spanning-tree root
-- LACP EtherChannels between core and access switches
+- CORESW1 as spanning-tree root
+- LACP EtherChannels to the access switches
 - 802.1Q trunks
-- access-port VLAN assignments
-- DHCP relay using `ip helper-address 10.0.20.3`
-- default routing toward the HQ router
-- NAT/PAT at the HQ router
+- DHCP relay to DC01
+- default route toward the HQ router
+- NAT/PAT on the HQ router
 - SSH management
 - NTP
-- PortFast and BPDU Guard on endpoint-facing ports
+- PortFast and BPDU Guard on endpoint ports
 
 ## Core routing
 
-CORESW1 uses:
+CORESW1 has IP routing enabled and uses the HQ router as the default route:
 
 ```cisco
 ip routing
 ip route 0.0.0.0 0.0.0.0 10.255.255.1
 ```
 
-The HQ router maintains a return route toward the internal lab networks through CORESW1.
-
 ## DHCP relay
 
-User VLAN SVIs relay DHCP broadcasts to DC01:
+DC01 is the DHCP server at **10.0.20.3**. Client VLAN SVIs use:
 
 ```cisco
 ip helper-address 10.0.20.3
 ```
 
-## Spanning Tree
+## Spanning tree
 
-Rapid PVST+ is used. CORESW1 is the preferred root bridge for the production VLANs.
+I'm running Rapid PVST+ and keeping CORESW1 as the root for the lab VLANs.
 
-PortFast and BPDU Guard are limited to true endpoint-facing access ports, not infrastructure links.
+One thing I had to clean up during the rebuild was PortFast/BPDU Guard placement. I only want those on real endpoint-facing access ports, not switch or router uplinks.
