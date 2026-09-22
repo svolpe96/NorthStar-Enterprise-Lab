@@ -1,16 +1,18 @@
 # Troubleshooting
 
-This section records incidents encountered while building NorthStar and the reasoning used to isolate and fix them.
+This is probably going to end up being one of the biggest parts of the repo.
 
-## Documented incidents
+I'm keeping track of the problems I actually run into while building the lab, not just the final working configs.
+
+## Current write-ups
 
 - [Proxmox VLAN tagging mismatch](proxmox-vlan-tagging.md)
-- [FS01 time synchronization and secure-channel failure](fs01-time-secure-channel.md)
-- switch hardware failure and rebuild — documentation in progress
+- [FS01 time / secure-channel failure](fs01-time-secure-channel.md)
+- old access switch hardware failure / rebuild - still need to write this one up
 
-The goal is to document not only the final fix, but:
-1. symptom
-2. tests performed
-3. root cause
-4. resolution
-5. validation
+For each issue I'm trying to keep:
+- what I saw
+- what I checked
+- what the actual cause was
+- what fixed it
+- how I knew it was fixed
