@@ -1,10 +1,10 @@
 # Architecture
 
-This section documents the high-level design of the NorthStar Enterprise Lab.
+This section documents the design of the NorthStar Enterprise Lab.
 
 ## Core design
 
-NorthStar is built as a small enterprise environment with a routed core, access-layer switching, Windows Server infrastructure, Proxmox virtualization, and multiple business VLANs.
+NorthStar is built as a small enterprise environment with routing, core, and access-layer switching, Windows Server infrastructure, Proxmox virtualization, and multiple business VLANs.
 
 ### Main infrastructure
 
