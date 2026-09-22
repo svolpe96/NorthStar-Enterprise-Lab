@@ -1,30 +1,40 @@
 # File Services
 
-FS01 is the dedicated NorthStar file server.
+This is the part of the lab I'm working on right now.
+
+FS01 is my dedicated file server:
 
 - Hostname: **FS01**
 - IP: **10.0.20.4**
 - VLAN: **20 - Servers**
 - Domain: **north.local**
 
-## Planned drive structure
+## What I want the final setup to look like
 
-| Drive | Purpose | Access |
+| Drive | Use | Who should get it |
 |---|---|---|
-| H: | Individual user home directory | Individual user |
+| H: | User home folder | each individual user |
 | P: | Personnel files | HR + Executives |
 | E: | Executive files | Executives only |
 
-## Design goals
+I want permissions to be group-based instead of assigning individual users directly.
 
-- use Active Directory security groups rather than individual user permissions
-- separate share permissions from NTFS permissions
-- automatically map drives based on user/group membership
-- validate access using test accounts from different departments
-- document successful and denied access tests
+That means I still need to finish:
+- AD security groups
+- folder structure
+- share permissions
+- NTFS permissions
+- drive mappings
+- testing with different user accounts
 
 ## Current status
 
-FS01 has been created in Proxmox, joined to the domain, and moved to the **Servers** OU.
+FS01 is:
+- built in Proxmox
+- on VLAN 20
+- joined to north.local
+- moved into the **Servers** OU
 
-The next phase is to create the production share structure and replace the temporary TestShare with the final H:, P:, and E: design.
+I made a temporary TestShare while troubleshooting connectivity, but that is not the final file-share layout.
+
+There have already been a couple good troubleshooting cases around FS01, especially Proxmox VLAN tagging and the time/secure-channel issue. Those are under [Troubleshooting](../08-Troubleshooting/README.md).
