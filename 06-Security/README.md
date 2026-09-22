@@ -1,27 +1,26 @@
 # Security
 
-Security controls implemented or planned in NorthStar.
+I'm keeping this page limited to things I've actually configured or am actively working toward.
 
-## Implemented
+## In place now
 
 - SSH management on Cisco devices
-- local administrative accounts
-- RSA keys
 - SSH v2
-- management VLAN
+- RSA keys for SSH
+- separate management VLAN
 - PortFast on endpoint access ports
 - BPDU Guard on endpoint access ports
-- unused VLAN 999 used as native/parking VLAN in the switching design
-- Windows Firewall used on servers/endpoints
+- unused ports / VLAN 999 as part of the switch hardening design
 
-## Planned
+## Next things I want to add
 
-- extended ACLs between business VLANs
-- restrict Shipping, Accounting, and HR access to the Executive VLAN
-- permit appropriate IT and Executive access
+- extended ACLs between VLANs
+- block Shipping / Accounting / HR from reaching the Executive VLAN
+- keep IT and Executive access where needed
 - DHCP Snooping
 - Dynamic ARP Inspection
 - IP Source Guard
 - LAPS
-- improved Windows security GPOs
-- centralized logging and monitoring
+- centralized logging / monitoring
+
+I don't want to list something here just because Windows or Cisco has it by default. If I actually configure and test it, I'll add it.
