@@ -1,6 +1,6 @@
 # Architecture
 
-This is the current high-level layout of NorthStar.
+This is the current layout of NorthStar.
 
 ## Main pieces
 
