@@ -46,7 +46,7 @@ Full write-up:
 
 ### Network rebuild
 
-The original access switch failed, so I had to rebuild the switching side of the lab on replacement hardware.
+The original build started in Jan 2026. Later in the year the access switch failed, so I had to rebuild the switching side of the lab on replacement hardware.
 
 Things rebuilt / verified:
 - VLANs
