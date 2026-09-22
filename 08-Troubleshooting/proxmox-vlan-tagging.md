@@ -1,27 +1,35 @@
 # Proxmox VLAN Tagging Mismatch
 
-## Symptom
+## What happened
 
-During FS01 deployment, the new server could not reach its default gateway or the Internet. Similar connectivity issues appeared when the DC VM was manually assigned VLAN tag 20 inside Proxmox.
+While I was setting up FS01, it couldn't reach the gateway or the Internet.
 
-## Investigation
+DC01 was already working on the same Proxmox host, so I started comparing the VM network settings.
 
-The physical Proxmox switchport was verified as an access port in VLAN 20, and VLAN 20 was present across the switching path.
+## What I found
 
-The existing DC VM was using `vmbr0` with no VLAN tag, while FS01 had initially been configured with VLAN tag 20.
+The switchport going to Proxmox was already configured as an access port in VLAN 20.
 
-## Root cause
+DC01 was connected to `vmbr0` with **no VLAN tag**, but I had added VLAN tag 20 to FS01 inside Proxmox.
 
-The switchport already classified untagged Proxmox traffic into VLAN 20. Adding a VLAN 20 tag at the VM level introduced a mismatch with the access-port design.
+That was the difference.
 
-## Resolution
+## Cause
 
-The VLAN tag was removed from the VM NIC configuration so the VMs used the same untagged bridge behavior as DC01.
+I was trying to tag VLAN 20 in two different places.
 
-## Validation
+The physical switchport was already putting untagged traffic into VLAN 20, so tagging the VM NIC itself didn't match the access-port setup I was using.
 
-After removing the VM VLAN tag:
-- FS01 could reach 10.0.20.1
-- FS01 could reach 8.8.8.8
-- DNS resolution worked
-- domain connectivity was restored
+## Fix
+
+I removed VLAN tag 20 from the FS01 VM NIC.
+
+## After the change
+
+FS01 was able to:
+- reach 10.0.20.1
+- reach the Internet
+- resolve DNS
+- communicate with the domain again
+
+This was a good reminder to check where VLAN tagging is actually supposed to happen before adding tags everywhere.
