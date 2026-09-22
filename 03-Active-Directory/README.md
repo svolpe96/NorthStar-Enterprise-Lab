@@ -1,22 +1,24 @@
 # Active Directory
 
-NorthStar uses the **north.local** Active Directory domain.
+The lab domain is **north.local**.
 
 ## DC01
 
-DC01 currently provides:
+DC01 is currently doing most of the Windows infrastructure work:
+
 - Active Directory Domain Services
 - DNS
 - DHCP
 - Group Policy
 
-IP address: **10.0.20.3**
+IP: **10.0.20.3**
 
-## OU design
+## OU layout
 
-The domain is being organized so infrastructure and endpoints can receive separate policies.
+I'm starting to separate servers, users, and workstations so I can apply policies without throwing everything into the default containers.
 
-Current design includes:
+Current layout:
+
 - Domain Controllers
 - Servers
 - Building
@@ -24,18 +26,16 @@ Current design includes:
     - Computers
     - Users
 
-FS01 was moved into the dedicated **Servers** OU.
+FS01 is in the **Servers** OU. DC01 stays in **Domain Controllers**.
 
-## Domain clients
+## What I'm using AD for in the lab
 
-Windows 11 systems are joined to the domain and used to test:
+- domain joining clients
 - user authentication
 - computer policies
 - DNS
 - DHCP
 - Group Policy
-- file-share access
+- file-share permissions / groups
 
-## Time hierarchy
-
-DC01 synchronizes with an external NTP source. Domain members are intended to follow the Active Directory domain time hierarchy.
+The OU structure will probably keep changing as the lab gets bigger.
