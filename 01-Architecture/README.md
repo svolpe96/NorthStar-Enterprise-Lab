@@ -1,37 +1,27 @@
 # Architecture
 
-This section documents the design of the NorthStar Enterprise Lab.
+This is the current high-level layout of NorthStar.
 
-## Core design
+## Main pieces
 
-NorthStar is built as a small enterprise environment with routing, core, and access-layer switching, Windows Server infrastructure, Proxmox virtualization, and multiple business VLANs.
+- **CORESW1** - Layer 3 core switch and default gateway for the VLANs
+- **ASW1 / ASW2** - Layer 2 access switches
+- **HQ router** - connects the lab toward the home network / Internet
+- **Branch router** - planned for later
+- **Proxmox** - hosts the server VMs
+- **DC01** - Active Directory, DNS, DHCP, Group Policy
+- **FS01** - file server
+- Windows 11 laptops - test clients
 
-### Main infrastructure
+## Routing
 
-- **CORESW1** — Layer 3 core switch and default gateway for internal VLANs
-- **ASW1 / ASW2** — Layer 2 access switches
-- **HQ router** — edge router between the lab and the home network / Internet
-- **Branch router** — planned branch connectivity
-- **Proxmox** — virtualization platform
-- **DC01** — Active Directory, DNS, DHCP, Group Policy
-- **FS01** — file services
-- Windows 11 laptops — simulated enterprise endpoints
+The client VLANs use SVIs on CORESW1 as their default gateways.
 
-## Routing path
+CORESW1 sends default traffic to the HQ router over the transit network:
 
-Internal endpoints use their VLAN SVI on CORESW1 as the default gateway. CORESW1 sends default traffic to the HQ router over the 10.255.255.0/24 transit network.
-
-- CORESW1: **10.255.255.2**
 - HQ router: **10.255.255.1**
+- CORESW1: **10.255.255.2**
 
-The HQ router performs NAT/PAT before forwarding traffic toward the home network and Internet.
+The HQ router then handles NAT/PAT out toward my home network.
 
-## Documentation goals
-
-This folder will eventually contain:
-- logical topology
-- physical topology
-- device inventory
-- IP addressing plan
-- service placement
-- future hybrid Azure architecture
+I still want to add a proper logical and physical diagram here once I settle on the final layout.
