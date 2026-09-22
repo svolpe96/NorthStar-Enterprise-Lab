@@ -1,32 +1,42 @@
-# Validation
+# Validation / Proof
 
-This folder tracks proof that the environment works as designed.
+I'm using this folder as a place to keep proof that something actually worked after I configured it.
 
-## Examples to capture
+I don't plan to screenshot every single step. I'd rather keep a few useful screenshots or command outputs that prove the result.
 
-### Networking
-- `show ip interface brief`
-- `show vlan brief`
-- `show interfaces trunk`
-- `show etherchannel summary`
-- `show spanning-tree root`
-- `show ip route`
-- successful endpoint Internet connectivity
+## Network checks I use
 
-### NTP
-- `show ntp status`
-- `show ntp associations`
-- `w32tm /query /source`
-- `w32tm /query /status`
+```text
+show ip interface brief
+show vlan brief
+show interfaces trunk
+show etherchannel summary
+show spanning-tree root
+show ip route
+```
 
-### Group Policy
-- `gpresult /scope computer /r`
-- successful `gpupdate /force`
-- `tzutil /g` showing Eastern Standard Time
+## Time checks
 
-### Active Directory / File Services
-- domain membership
-- mapped H:, P:, and E: drives
-- successful/denied access based on department membership
+```text
+show ntp status
+show ntp associations
+w32tm /query /source
+w32tm /query /status
+```
 
-Screenshots should be used selectively as evidence, not as a replacement for written documentation.
+## Group Policy checks
+
+```text
+gpupdate /force
+gpresult /scope computer /r
+tzutil /g
+```
+
+## File server checks I still need
+
+- H: maps for a normal user
+- P: maps for HR / Executives
+- E: maps for Executives only
+- unauthorized users get denied where expected
+
+I'll add screenshots and outputs here as I get them.
