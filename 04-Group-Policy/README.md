@@ -1,40 +1,44 @@
 # Group Policy
 
-This section tracks Group Policy Objects created for the NorthStar environment.
+These are the GPOs I've actually built and tested so far.
 
-## Implemented / tested
+## Lab Power Settings
 
-### Lab Power Settings
-Applied to lab workstation computer accounts.
+This is linked to the lab workstation computers.
 
-Purpose:
-- prevent domain lab machines from sleeping while plugged in
-- prevent the display from turning off while plugged in
+I use it to keep the machines awake while plugged in so they don't go to sleep during testing.
 
-### Domain Member Time Sync
-Applied to domain member servers and workstations.
+## Domain Member Time Sync
 
-Purpose:
-- use the Active Directory domain time hierarchy
-- keep domain members aligned with DC01
+I set domain members to use the AD time hierarchy instead of picking their own external NTP source.
 
-The Windows NTP client type is configured as **NT5DS** for domain members.
+Windows NTP client type:
 
-### NorthStar - Eastern Time Zone
-Purpose:
-- standardize domain systems on Eastern Time
+```text
+NT5DS
+```
 
-The working deployment method uses **Group Policy Preferences → Immediate Task** running as SYSTEM.
+The goal is basically:
 
-Command:
+```text
+external time source
+        ↓
+       DC01
+        ↓
+domain members
+```
+
+## NorthStar - Eastern Time Zone
+
+I wanted all of the lab systems to stay on the same time zone too.
+
+The method that ended up working cleanly was a Group Policy Preferences **Immediate Task** running as SYSTEM:
 
 ```text
 C:\Windows\System32\tzutil.exe /s "Eastern Standard Time"
 ```
 
-## Validation
-
-Useful commands:
+## Commands I use to check GPO / time
 
 ```cmd
 gpupdate /force
@@ -44,4 +48,4 @@ w32tm /query /status
 tzutil /g
 ```
 
-Future GPO work will include security baselines, drive mapping, firewall settings, LAPS, and other endpoint controls.
+Next up for Group Policy will probably be drive mappings for the file server.
