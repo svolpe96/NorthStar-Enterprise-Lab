@@ -1,51 +1,48 @@
 # Group Policy
 
-These are the GPOs I've actually built and tested so far.
+This is where I'm keeping track of the GPOs I've created in the NorthStar domain. I'm not going to document every command I used to test them here. If a GPO causes an issue or leads to something worth troubleshooting, I'll document that separately.
 
-## Lab Power Settings
+## GPOs I've Created
 
-This is linked to the lab workstation computers.
+### Lab Power Settings
 
-I use it to keep the machines awake while plugged in so they don't go to sleep during testing.
+Created this for the lab workstations so they stay awake while they're plugged in.
 
-## Domain Member Time Sync
+I don't want the laptops going to sleep in the middle of testing, updates, or when I'm working on something remotely.
 
-I set domain members to use the AD time hierarchy instead of picking their own external NTP source.
+**What I changed:**
+- Prevent sleep while plugged in
+- Prevent the display from turning off while plugged in
+- Left the battery settings alone
 
-Windows NTP client type:
+---
 
-```text
-NT5DS
-```
+### Domain Member Time Sync
 
-The goal is basically:
+Created this so domain-joined machines follow the Active Directory time hierarchy instead of using their own external time source.
 
-```text
-external time source
-        ↓
-       DC01
-        ↓
-domain members
-```
+DC01 gets its time externally and the domain members get their time through the domain.
 
-## NorthStar - Eastern Time Zone
+**Applied to:**
+- Servers
+- NorthStarHQ computers
 
-I wanted all of the lab systems to stay on the same time zone too.
+---
 
-The method that ended up working cleanly was a Group Policy Preferences **Immediate Task** running as SYSTEM:
+### NorthStar - Eastern Time Zone
 
-```text
-C:\Windows\System32\tzutil.exe /s "Eastern Standard Time"
-```
+Created this because I wanted all of the lab machines using the same time zone.
 
-## Commands I use to check GPO / time
+I originally tried handling this another way, but ended up using a Group Policy Preferences Immediate Task to set the machines to Eastern Time.
 
-```cmd
-gpupdate /force
-gpresult /scope computer /r
-w32tm /query /source
-w32tm /query /status
-tzutil /g
-```
+**Time zone:**
+- Eastern Standard Time
+- Windows handles EST/EDT changes automatically
 
-Next up for Group Policy will probably be drive mappings for the file server.
+---
+
+## Next GPOs
+
+The next one I'll probably work on is drive mapping for the file server once the H:, P:, and E: shares are ready.
+
+I'll keep adding new GPOs to this page as I create them.
