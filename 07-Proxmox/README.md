@@ -14,7 +14,7 @@ Proxmox is hosting the Windows Server side of NorthStar.
 
 ### FS01
 - Windows Server
-- 10.0.20.4
+- IP 10.0.20.4
 - file server
 
 ## One thing I learned the hard way
