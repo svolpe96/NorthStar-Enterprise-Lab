@@ -1,6 +1,6 @@
 # NorthStar Enterprise Lab
 
-NorthStar is my home enterprise lab. I built it to get more hands-on with Cisco networking, Windows Server, Active Directory, Proxmox, security, troubleshooting, and eventually Azure.
+NorthStar is my home enterprise environment. I built it to get more hands-on with Cisco networking, Windows Server, Active Directory, Proxmox, security, troubleshooting, and eventually Azure.
 
 This repo is a work in progress. I'm using it to keep track of what I've built, what changed, what broke, and how I fixed it.
 
