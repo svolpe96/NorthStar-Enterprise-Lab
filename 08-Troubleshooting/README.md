@@ -1,8 +1,6 @@
 # Troubleshooting
 
-This is probably going to end up being one of the biggest parts of the repo.
-
-I'm keeping track of the problems I actually run into while building the lab, not just the final working configs.
+I'm keeping track of notable problems I run into while building this environment.
 
 ## Current write-ups
 
