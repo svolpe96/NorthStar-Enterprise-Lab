@@ -8,7 +8,7 @@ This is where I'm keeping track of the GPOs I've created in the NorthStar domain
 
 Created this for the lab workstations so they stay awake while they're plugged in.
 
-I don't want the laptops going to sleep in the middle of testing, updates, or when I'm working on something remotely.
+I don't want the laptops going to sleep in the middle of testing, updates, or when I'm working on something.
 
 **What I changed:**
 - Prevent sleep while plugged in
@@ -25,15 +25,15 @@ DC01 gets its time externally and the domain members get their time through the 
 
 **Applied to:**
 - Servers
-- NorthStarHQ computers
+- computers
 
 ---
 
-### NorthStar - Eastern Time Zone
+### Time Zone
 
 Created this because I wanted all of the lab machines using the same time zone.
 
-I originally tried handling this another way, but ended up using a Group Policy Preferences Immediate Task to set the machines to Eastern Time.
+I originally tried handling this through a script, but I found it to be too clunky, so I ended up using a Group Policy Preferences Immediate Task to set the machines to Eastern Time.
 
 **Time zone:**
 - Eastern Standard Time
