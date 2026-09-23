@@ -60,7 +60,6 @@ I'm planning to use AD security groups, NTFS/share permissions, and Group Policy
 - [Proxmox](07-Proxmox/README.md)
 - [Troubleshooting](08-Troubleshooting/README.md)
 - [Device Configs](09-Configs/README.md)
-- [Validation / proof](10-Validation/README.md)
 - [Project log](PROJECT-LOG.md)
 
 ## Things I want to add later
