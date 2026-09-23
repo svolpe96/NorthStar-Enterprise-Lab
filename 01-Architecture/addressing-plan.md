@@ -19,8 +19,8 @@
 
 ## Transit network
 
-- HQ router: **10.255.255.1/24**
-- CORESW1: **10.255.255.2/24**
+- HQ router: **10.255.255.1/30**
+- CORESW1: **10.255.255.2/30**
 
 
 ## Addressing Reasoning
