@@ -6,7 +6,7 @@ Proxmox is hosting the Windows Server side of NorthStar.
 
 ### DC01
 - Windows Server
-- 10.0.20.3
+- IP 10.0.20.3
 - AD DS
 - DNS
 - DHCP
