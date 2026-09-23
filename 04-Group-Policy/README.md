@@ -1,6 +1,6 @@
 # Group Policy
 
-This is where I'm keeping track of the GPOs I've created in the NorthStar domain. I'm not going to document every command I used to test them here. If a GPO causes an issue or leads to something worth troubleshooting, I'll document that separately.
+This is where I'm keeping track of the GPOs I've created. I'm not going to document every command I used to test them here. If a GPO causes an issue or leads to something worth troubleshooting, I'll document that separately.
 
 ## GPOs I've Created
 
@@ -37,12 +37,5 @@ I originally tried handling this through a script, but I found it to be too clun
 
 **Time zone:**
 - Eastern Standard Time
-- Windows handles EST/EDT changes automatically
 
 ---
-
-## Next GPOs
-
-The next one I'll probably work on is drive mapping for the file server once the H:, P:, and E: shares are ready.
-
-I'll keep adding new GPOs to this page as I create them.
