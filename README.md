@@ -4,6 +4,12 @@ NorthStar is my home enterprise lab. I built it to get more hands-on with Cisco 
 
 This repo is a work in progress. I'm using it to keep track of what I've built, what changed, what broke, and how I fixed it.
 
+## Lab Setup
+
+![NorthStar lab setup](01-Architecture/20260725_220506.jpg)
+
+Current physical NorthStar lab setup. The rack contains the networking and server infrastructure, with several laptops used as domain clients across the different VLANs.
+
 ## Current setup
 
 ### Network
