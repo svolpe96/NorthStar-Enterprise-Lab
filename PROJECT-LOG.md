@@ -2,6 +2,35 @@
 
 This is just a running log of what I'm working on and problems I run into. It is not meant to be polished documentation.
 
+## September 24-25, 2026
+
+### File services
+
+Spent most of the session building out FS01.
+
+- Created the **Home**, **Personnel**, and **Executive** folders and set NTFS/share permissions
+- Built security groups for Human Resources, Executives, and the two department shares
+- Set up **H:** home drives, **P:** Personnel, and **E:** Executive
+- Verified the Personnel share with an HR user and an Executive user
+- Added FSRM quotas: **5 GB per home folder**, **20 GB for Personnel**, and **50 GB for Executive**
+- Started using Group Policy drive maps so the department drives appear automatically at logon
+
+### Home-folder automation
+
+I didn't want to manually create every user's home folder, so I started automating it.
+
+Created a PowerShell script that creates missing home folders and gives each user Modify permission. I also built a Scheduled Task on DC01 that watches for **Security Event ID 4720** when a new AD user is created and launches the script.
+
+The task action is working now. I still need to do the final end-to-end test with a brand-new user to make sure the event trigger creates the folder automatically.
+
+### FS01 performance / time issue
+
+FS01 started getting extremely slow again while its clock was also jumping thousands of years into the future.
+
+The Proxmox host and DC01 both had correct time, so I narrowed it down to FS01. Windows was reporting 100% CPU even though normal processes were not using it. After changing the Windows per-CPU clock tick scheduling setting, CPU usage dropped and the server became responsive again.
+
+I then corrected the date and returned FS01 to the normal domain time hierarchy.
+
 ## September 22, 2026
 
 ### FS01 / file services
