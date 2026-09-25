@@ -103,13 +103,13 @@ Each user folder then gets that individual user with **Modify** permissions.
 Example:
 
 ```text
-C:\Shares\Home\Evolpe
+C:\Shares\Home\User
 ```
 
 with:
 
 ```text
-NORTH\Evolpe - Modify
+NORTH\User - Modify
 ```
 
 The H: drive maps to:
