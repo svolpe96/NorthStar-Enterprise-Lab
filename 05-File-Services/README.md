@@ -1,7 +1,5 @@
 # File Services
 
-This is the part of the lab I'm working on right now.
-
 FS01 is my dedicated file server:
 
 - Hostname: **FS01**
@@ -9,32 +7,143 @@ FS01 is my dedicated file server:
 - VLAN: **20 - Servers**
 - Domain: **north.local**
 
-## What I want the final setup to look like
+## Current shares
 
-| Drive | Use | Who should get it |
-|---|---|---|
-| H: | User home folder | each individual user |
-| P: | Personnel files | HR + Executives |
-| E: | Executive files | Executives only |
+| Drive | Share | Use | Access |
+|---|---|---|---|
+| H: | `\\FS01\Home$` | User home folders | Each user gets their own folder |
+| P: | `\\FS01\Personnel$` | Personnel files | Human Resources + Executives |
+| E: | `\\FS01\Executive$` | Executive files | Executives only |
 
-I want permissions to be group-based instead of assigning individual users directly.
+I used hidden shares so the share names do not show up during normal browsing of `\\FS01`.
 
-That means I still need to finish:
-- AD security groups
-- folder structure
-- share permissions
-- NTFS permissions
-- drive mappings
-- testing with different user accounts
+## Folder structure
 
-## Current status
+The shares are stored under:
 
-FS01 is:
-- built in Proxmox
-- on VLAN 20
-- joined to north.local
-- moved into the **Servers** OU
+```text
+C:\Shares
+├── Home
+├── Personnel
+└── Executive
+```
 
-I made a temporary TestShare while troubleshooting connectivity, but that is not the final file-share layout.
+## Security groups
 
-There have already been a couple good troubleshooting cases around FS01, especially Proxmox VLAN tagging and the time/secure-channel issue. Those are under [Troubleshooting](../08-Troubleshooting/README.md).
+I separated the department groups from the groups that are actually assigned permissions to the file shares.
+
+Current groups:
+
+- **Human Resources**
+- **Executives**
+- **Personnel Share RW**
+- **Executive Share RW**
+
+The memberships are set up like this:
+
+```text
+Human Resources
+    └── Personnel Share RW
+
+Executives
+    ├── Personnel Share RW
+    └── Executive Share RW
+```
+
+This lets me add users to their department group without having to edit the folder permissions every time someone changes roles.
+
+## Personnel share
+
+`C:\Shares\Personnel`
+
+NTFS permissions:
+
+- Administrators - Full Control
+- SYSTEM - Full Control
+- Personnel Share RW - Modify
+
+Share permissions:
+
+- Personnel Share RW - Change / Read
+
+I tested the share with a Human Resources user and an Executive user and both were able to access it.
+
+The Personnel share is mapped as **P:** through Group Policy.
+
+## Executive share
+
+`C:\Shares\Executive`
+
+NTFS permissions:
+
+- Administrators - Full Control
+- SYSTEM - Full Control
+- Executive Share RW - Modify
+
+Share permissions:
+
+- Executive Share RW - Change / Read
+
+The Executive share is mapped as **E:** through Group Policy and is only targeted to the Executive permission group.
+
+## Home folders
+
+`C:\Shares\Home`
+
+The Home root is set up differently because each user's folder needs to stay private.
+
+Root permissions:
+
+- Administrators - Full Control
+- SYSTEM - Full Control
+- Domain Users - Read & Execute on **This folder only**
+
+Each user folder then gets that individual user with **Modify** permissions.
+
+Example:
+
+```text
+C:\Shares\Home\Evolpe
+```
+
+with:
+
+```text
+NORTH\Evolpe - Modify
+```
+
+The H: drive maps to:
+
+```text
+\\FS01\Home$\%USERNAME%
+```
+
+through Group Policy.
+
+## Quotas
+
+I installed File Server Resource Manager and added hard quotas to the file shares.
+
+Current limits:
+
+- **H:** 5 GB per user folder
+- **P:** 20 GB total
+- **E:** 50 GB total
+
+The H: quota is auto-applied to subfolders under `C:\Shares\Home`, so every new home folder gets its own 5 GB limit automatically.
+
+## Home-folder automation
+
+I didn't want to manually create every user's home folder.
+
+I created a PowerShell script that checks for missing home folders, creates them, and gives the correct user Modify permission.
+
+I also created a Scheduled Task on DC01 that watches for **Security Event ID 4720**, which is generated when a new Active Directory user is created. The task launches the home-folder script.
+
+The task action is working. I still need to finish the final end-to-end test to make sure a newly created account automatically gets its home folder without me manually running the task.
+
+## Troubleshooting
+
+There have already been a few useful troubleshooting cases around FS01, especially the Proxmox VLAN tagging issue and the time / secure-channel problem.
+
+Those are under [Troubleshooting](../08-Troubleshooting/README.md).
