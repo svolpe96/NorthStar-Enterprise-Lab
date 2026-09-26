@@ -19,15 +19,41 @@ The portal collects:
 - start date
 
 The backend PowerShell script now:
-- generates the account name using the first initial plus the last 7 characters of the last name
+- creates the username automatically
 - creates the user in the correct department OU
-- sets the AD user attributes
-- adds Human Resources or Executive group membership when needed
+- adds the user to the correct department group
 - creates the user's H: folder
-- applies the user's NTFS permissions
-- lets the existing FSRM and GPO configuration handle quotas and mapped drives
+- lets the existing FSRM and GPO setup handle quotas and mapped drives
+
+The portal now works for **Shipping, Accounting, Human Resources, Executives, and I.T.**
+
+I also cleaned up the result page so HR only sees the useful account information instead of raw PowerShell output.
 
 The lab password is currently **Logmein1**, set to not expire and not require a change at first logon. This is a lab-only choice and not how I would handle passwords in production.
+
+### Department groups and permissions
+
+I changed the way I want department permissions to work.
+
+Instead of giving permissions directly to each employee, new users are added to one main department group when they are created.
+
+Example:
+
+```
+New Accounting user
+    ↓
+Accounting
+    ↓
+Accounting Share RW
+    ↓
+Accounting permissions
+```
+
+The same idea will be used for Human Resources, Executives, Shipping, and I.T.
+
+This makes onboarding much simpler. The website only needs to put the employee in the right department group. From there, I can nest other permission groups under that department and everyone in the department automatically gets the correct access.
+
+I created the **Accounting** and **Accounting Share RW** groups and nested Accounting inside Accounting Share RW. I also created the **Shipping** and **I.T** department groups so all five departments now follow the same basic layout.
 
 ### Service account / delegated permissions
 
@@ -35,7 +61,7 @@ Created a dedicated **SVC_Onboarding** account instead of running the portal as 
 
 I delegated the permissions it needs to:
 - create and manage users under the NorthStar user OUs
-- manage membership of the Human Resources and Executives groups
+- add users to the department groups
 - create and manage home folders under `C:\Shares\Home`
 - write provisioning logs to a dedicated log folder
 
@@ -50,7 +76,7 @@ Current behavior:
 - users outside that group are not authorized
 - the HR user only gets access to the portal; the actual provisioning actions still run under `SVC_Onboarding`
 
-I tested the portal with Human Resources and Executive accounts and confirmed new users were placed into the correct groups.
+I tested the provisioning flow and confirmed users are being created in the correct OU, added to the correct department group, and given their home folder.
 
 ## September 24-25, 2026
 
