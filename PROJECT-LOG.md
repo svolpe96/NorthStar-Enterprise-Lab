@@ -2,6 +2,56 @@
 
 This is just a running log of what I'm working on and problems I run into. It is not meant to be polished documentation.
 
+## September 25-26, 2026
+
+### HR onboarding portal
+
+Changed direction on the new-user automation. Instead of relying on the Event ID 4720 Scheduled Task to react after accounts are created, I built a small internal onboarding portal so the account is created through the provisioning workflow from the start.
+
+Because I didn't have enough Proxmox storage for another VM, I hosted the lab version of the portal on **FS01** using IIS. In a real environment I would separate the web application from the file server.
+
+The portal collects:
+- first name
+- last name
+- department
+- job title
+- manager
+- start date
+
+The backend PowerShell script now:
+- generates the account name using the first initial plus the last 7 characters of the last name
+- creates the user in the correct department OU
+- sets the AD user attributes
+- adds Human Resources or Executive group membership when needed
+- creates the user's H: folder
+- applies the user's NTFS permissions
+- lets the existing FSRM and GPO configuration handle quotas and mapped drives
+
+The lab password is currently **Logmein1**, set to not expire and not require a change at first logon. This is a lab-only choice and not how I would handle passwords in production.
+
+### Service account / delegated permissions
+
+Created a dedicated **SVC_Onboarding** account instead of running the portal as Domain Administrator.
+
+I delegated the permissions it needs to:
+- create and manage users under the NorthStar user OUs
+- manage membership of the Human Resources and Executives groups
+- create and manage home folders under `C:\Shares\Home`
+- write provisioning logs to a dedicated log folder
+
+The provisioning script was tested successfully while running as `NORTH\SVC_Onboarding`.
+
+### Portal access control
+
+Created the **NorthStar HR Onboarding** security group and restricted the IIS onboarding application with Windows Authentication.
+
+Current behavior:
+- users in `NorthStar HR Onboarding` can open the portal using their existing domain sign-in
+- users outside that group are not authorized
+- the HR user only gets access to the portal; the actual provisioning actions still run under `SVC_Onboarding`
+
+I tested the portal with Human Resources and Executive accounts and confirmed new users were placed into the correct groups.
+
 ## September 24-25, 2026
 
 ### File services
