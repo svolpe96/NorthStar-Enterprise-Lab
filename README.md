@@ -21,7 +21,7 @@ This repo is a work in progress. I'm using it to keep track of what I've built, 
 ### Windows / virtualization
 - **Proxmox** hosts the server VMs
 - **DC01 - 10.0.20.3** - AD DS, DNS, DHCP, Group Policy
-- **FS01 - 10.0.20.4** - file server
+- **FS01 - 10.0.20.4** - file server and current lab host for the internal onboarding site
 - Domain: **north.local**
 - Windows 11 clients are used as test endpoints
 
@@ -38,16 +38,13 @@ This repo is a work in progress. I'm using it to keep track of what I've built, 
 | 140 | IT | 10.0.140.0/24 | 10.0.140.1 |
 | 999 | Native / unused | N/A | N/A |
 
-## What I'm working on now
+## Current Windows work
 
-Right now I'm building out file services on FS01.
+FS01 now has user home folders, department shares, quotas, and GPO drive mappings.
 
-Planned shares:
-- **H:** private home drive for each user
-- **P:** Personnel share for HR + Executives
-- **E:** Executive-only share
+I also built a small internal HR onboarding site. An authorized HR user can create an employee, and the backend handles the AD account, department placement, department group membership, and home folder.
 
-I'm planning to use AD security groups, NTFS/share permissions, and Group Policy drive mappings.
+Department groups are being used as the main entry point for permissions. Instead of assigning access user by user, I can nest a department group into the resource groups that department needs.
 
 ## Project sections
 
@@ -60,6 +57,7 @@ I'm planning to use AD security groups, NTFS/share permissions, and Group Policy
 - [Proxmox](07-Proxmox/README.md)
 - [Troubleshooting](08-Troubleshooting/README.md)
 - [Device Configs](09-Configs/README.md)
+- [HR Onboarding](10-HR-Onboarding/README.md)
 - [Project log](PROJECT-LOG.md)
 
 ## Things I want to add later
