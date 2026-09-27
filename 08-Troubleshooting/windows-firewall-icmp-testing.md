@@ -11,6 +11,8 @@ From a client in one user VLAN, I could ping:
 
 But I could not ping the Windows workstations inside those VLANs.
 
+<img width="728" height="372" alt="ping failed" src="https://github.com/user-attachments/assets/4f7e5bb0-653a-4b34-81b8-1195dd814032" />
+
 At first this looked like an inter-VLAN routing problem.
 
 ## What I checked
@@ -33,14 +35,13 @@ On the Windows test workstation, I opened **Windows Defender Firewall with Advan
 
 - uses ICMPv4
 - allows Echo Request
-- allows the connection
-- applies to the Domain profile
 
 I named the rule:
 
 ```text
-NorthStar - Allow ICMPv4 Echo
+Allow ICMPv4 Echo Requests
 ```
+<img width="1178" height="671" alt="ICMPv4 echo requests" src="https://github.com/user-attachments/assets/e17f54f7-415f-4034-8962-aa171d41610f" />
 
 ## Why I made the change
 
@@ -59,3 +60,6 @@ The workstation responded to ping, confirming that:
 - inter-VLAN routing was working
 - the original problem was Windows Defender Firewall
 - ICMP can now be used to help validate the ACL project
+<img width="528" height="701" alt="all working pings" src="https://github.com/user-attachments/assets/58cf317d-dfcb-46f3-a626-005a73ad5481" />
+<img width="520" height="708" alt="all working pings 2" src="https://github.com/user-attachments/assets/f8c1aa01-bb14-402b-8ba5-c539fe03b601" />
+
