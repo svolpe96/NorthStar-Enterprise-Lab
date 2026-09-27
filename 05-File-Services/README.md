@@ -11,50 +11,62 @@ FS01 is my dedicated file server:
 
 | Drive | Share | Use | Access |
 |---|---|---|---|
-| H: | `\\FS01\Home$` | User home folders | Each user gets their own folder |
-| P: | `\\FS01\Personnel$` | Personnel files | Human Resources + Executives |
-| E: | `\\FS01\Executive$` | Executive files | Executives only |
+| H: | \\FS01\Home$ | User home folders | Each user gets their own folder |
+| P: | \\FS01\Personnel$ | Personnel files | Human Resources + Executives |
+| E: | \\FS01\Executive$ | Executive files | Executives only |
+| - | \\FS01\Accounting$ | Accounting files | Accounting |
 
-I used hidden shares so the share names do not show up during normal browsing of `\\FS01`.
+I used hidden shares so the share names do not show up during normal browsing of \\FS01.
 
 ## Folder structure
 
 The shares are stored under:
 
-```text
+~~~text
 C:\Shares
 ├── Home
 ├── Personnel
-└── Executive
-```
+├── Executive
+└── Accounting
+~~~
 
-## Security groups
+## How I'm handling permissions
 
 I separated the department groups from the groups that are actually assigned permissions to the file shares.
 
-Current groups:
+Example:
 
-- **Human Resources**
-- **Executives**
-- **Personnel Share RW**
-- **Executive Share RW**
+~~~text
+Accounting user
+    ↓
+Accounting
+    ↓
+Accounting Share RW
+    ↓
+\\FS01\Accounting$
+~~~
 
-The memberships are set up like this:
+This means I can add a user to **Accounting** and let the group nesting handle the share access.
 
-```text
+I don't have to add every new employee directly to the folder permissions.
+
+Current examples:
+
+~~~text
 Human Resources
     └── Personnel Share RW
 
 Executives
     ├── Personnel Share RW
     └── Executive Share RW
-```
 
-This lets me add users to their department group without having to edit the folder permissions every time someone changes roles.
+Accounting
+    └── Accounting Share RW
+~~~
 
 ## Personnel share
 
-`C:\Shares\Personnel`
+C:\Shares\Personnel
 
 NTFS permissions:
 
@@ -66,13 +78,11 @@ Share permissions:
 
 - Personnel Share RW - Change / Read
 
-I tested the share with a Human Resources user and an Executive user and both were able to access it.
-
 The Personnel share is mapped as **P:** through Group Policy.
 
 ## Executive share
 
-`C:\Shares\Executive`
+C:\Shares\Executive
 
 NTFS permissions:
 
@@ -84,11 +94,19 @@ Share permissions:
 
 - Executive Share RW - Change / Read
 
-The Executive share is mapped as **E:** through Group Policy and is only targeted to the Executive permission group.
+The Executive share is mapped as **E:** through Group Policy.
+
+## Accounting share
+
+C:\Shares\Accounting
+
+The **Accounting** department group is nested into **Accounting Share RW**.
+
+The permission group is then used on the Accounting share instead of assigning permissions to each Accounting user.
 
 ## Home folders
 
-`C:\Shares\Home`
+C:\Shares\Home
 
 The Home root is set up differently because each user's folder needs to stay private.
 
@@ -100,23 +118,11 @@ Root permissions:
 
 Each user folder then gets that individual user with **Modify** permissions.
 
-Example:
-
-```text
-C:\Shares\Home\User
-```
-
-with:
-
-```text
-NORTH\User - Modify
-```
-
 The H: drive maps to:
 
-```text
+~~~text
 \\FS01\Home$\%USERNAME%
-```
+~~~
 
 through Group Policy.
 
@@ -130,17 +136,17 @@ Current limits:
 - **P:** 20 GB total
 - **E:** 50 GB total
 
-The H: quota is auto-applied to subfolders under `C:\Shares\Home`, so every new home folder gets its own 5 GB limit automatically.
+The H: quota is auto-applied to subfolders under C:\Shares\Home, so every new home folder gets its own 5 GB limit automatically.
 
-## Home-folder automation
+## Home-folder creation
 
-I didn't want to manually create every user's home folder.
+I originally experimented with an Event ID 4720 Scheduled Task to create home folders after a user was created.
 
-I created a PowerShell script that checks for missing home folders, creates them, and gives the correct user Modify permission.
+I ended up replacing that idea with the HR onboarding workflow.
 
-I also created a Scheduled Task on DC01 that watches for **Security Event ID 4720**, which is generated when a new Active Directory user is created. The task launches the home-folder script.
+The onboarding script now creates the user's AD account and home folder together. Group Policy then maps the H: drive when the user signs in.
 
-The task action is working. I still need to finish the final end-to-end test to make sure a newly created account automatically gets its home folder without me manually running the task.
+More details are under [HR Onboarding](../10-HR-Onboarding/README.md).
 
 ## Troubleshooting
 
