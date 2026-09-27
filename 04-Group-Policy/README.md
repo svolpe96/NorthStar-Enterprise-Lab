@@ -39,3 +39,30 @@ I originally tried handling this through a script, but I found it to be too clun
 - Eastern Standard Time
 
 ---
+
+### User Home Drive
+
+Created this so users automatically get their own **H:** drive when they sign in.
+
+**Path:**
+
+~~~text
+\\FS01\Home$\%USERNAME%
+~~~
+
+The user's folder is created during onboarding, and the GPO handles the drive mapping.
+
+---
+
+### Department Drive Maps
+
+I use Group Policy Preferences for the department shares.
+
+Current mappings:
+
+- **P:** Personnel
+- **E:** Executive
+
+The mappings are targeted with security groups so users only see the drives they should have.
+
+The actual share permissions are handled on FS01. The GPO is only responsible for putting the drive in front of the right users.
