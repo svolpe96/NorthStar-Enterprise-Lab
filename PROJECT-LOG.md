@@ -2,6 +2,62 @@
 
 This is just a running log of what I'm working on and problems I run into. It is not meant to be polished documentation.
 
+## September 27, 2026
+
+### Inter-VLAN ACL project
+
+Started building the ACL portion of the lab.
+
+The first goal is to segment the user VLANs so departments cannot freely communicate with each other. I am only applying ACLs to the user VLAN SVIs for now. The Server and Management VLANs will be handled separately later.
+
+I am using named extended ACLs on **CORESW1**, applied inbound on the user VLAN SVIs.
+
+Current user VLANs:
+
+- Shipping - 10.0.100.0/24
+- Accounting - 10.0.110.0/24
+- Human Resources - 10.0.120.0/24
+- Executives - 10.0.130.0/24
+- I.T - 10.0.140.0/24
+
+Before applying the first ACL, I verified that inter-VLAN routing itself was working. I could ping the SVI/default gateway addresses for the other VLANs, but Windows workstations did not answer ICMP. That turned out to be Windows Defender Firewall blocking inbound Echo Requests.
+
+I created an inbound ICMPv4 Echo Request rule on the test clients so ping can be used as a clean ACL validation tool.
+
+Full troubleshooting note:
+[Windows Firewall Blocking Inter-VLAN Ping](08-Troubleshooting/windows-firewall-icmp-testing.md)
+
+### Shipping ACL
+
+Built and applied the first ACL:
+
+```text
+SHIPPING-IN
+```
+
+The Shipping policy currently does the following:
+
+- allows DHCP client requests
+- allows Shipping clients to ping their own default gateway
+- allows Shipping to reach the Server VLAN
+- blocks Shipping from the rest of the internal 10.0.0.0/8 address space
+- allows traffic to external destinations / the Internet
+
+The ACL is applied inbound on **Vlan100**.
+
+I tested the policy from a Shipping workstation and confirmed:
+
+- Shipping can reach its own gateway
+- Shipping can reach DC01 in the Server VLAN
+- Shipping can reach the Internet
+- Shipping cannot reach workstations in the other user VLANs
+
+I also used the ACL hit counters to confirm that the inter-VLAN deny rule was matching traffic.
+
+One useful mistake during the build was accidentally using the wrong wildcard mask on the internal deny. I first entered a wildcard that IOS interpreted as `any`, which would have blocked Shipping from everything. I corrected the destination to `10.0.0.0 0.255.255.255`, which matches the internal `10.0.0.0/8` space.
+
+Next step is to repeat the same design for Accounting, Human Resources, Executives, and I.T., then capture the completed ACL set for documentation.
+
 ## September 25-26, 2026
 
 ### HR onboarding portal
