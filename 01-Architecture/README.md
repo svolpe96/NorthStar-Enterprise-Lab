@@ -2,6 +2,9 @@
 
 This is the current layout of NorthStar.
 
+<img width="4000" height="2252" alt="lab" src="https://github.com/user-attachments/assets/02263361-6f1f-4de6-9fb4-b68c126f9874" />
+
+
 ## Main pieces
 
 - **CORESW1** - Layer 3 core switch and default gateway for the VLANs
