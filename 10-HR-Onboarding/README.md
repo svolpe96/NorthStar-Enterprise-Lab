@@ -1,6 +1,9 @@
+
 # HR Onboarding
 
 I built a small internal onboarding page so I could stop creating every test employee manually in Active Directory.
+
+<img width="1360" height="760" alt="1" src="https://github.com/user-attachments/assets/5af74d0b-de2b-42ee-8bb8-922f7a98b1b3" />
 
 The lab version is hosted on **FS01** with IIS because I didn't have enough Proxmox storage for another VM. In a real environment I would separate the web application from the file server.
 
@@ -39,6 +42,9 @@ Create the user's home folder
         ↓
 GPO / nested groups handle the rest
 ~~~
+
+<img width="747" height="525" alt="test user" src="https://github.com/user-attachments/assets/497828ff-c54e-4b6c-876d-15c7d090ea6b" />
+
 
 The website only needs to know which department the employee belongs to.
 
