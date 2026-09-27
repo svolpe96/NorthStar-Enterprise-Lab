@@ -12,8 +12,6 @@ The lab version is hosted on **FS01** with IIS because I didn't have enough Prox
 - Job title
 - Start date
 
-The manager field was removed because I wasn't really using it for anything useful in the lab.
-
 ## Current departments
 
 - Shipping
