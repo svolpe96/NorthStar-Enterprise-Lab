@@ -10,13 +10,14 @@ Changed direction on the new-user automation. Instead of relying on the Event ID
 
 Because I didn't have enough Proxmox storage for another VM, I hosted the lab version of the portal on **FS01** using IIS. In a real environment I would separate the web application from the file server.
 
-The portal collects:
+The portal now collects:
 - first name
 - last name
 - department
 - job title
-- manager
 - start date
+
+I removed the manager field because it wasn't really adding anything useful to the lab.
 
 The backend PowerShell script now:
 - creates the username automatically
@@ -67,6 +68,8 @@ I delegated the permissions it needs to:
 
 The provisioning script was tested successfully while running as `NORTH\SVC_Onboarding`.
 
+I also moved **Service Accounts** to the top level of the domain so it is easier to separate service identities from normal employee accounts.
+
 ### Portal access control
 
 Created the **NorthStar HR Onboarding** security group and restricted the IIS onboarding application with Windows Authentication.
@@ -77,6 +80,18 @@ Current behavior:
 - the HR user only gets access to the portal; the actual provisioning actions still run under `SVC_Onboarding`
 
 I tested the provisioning flow and confirmed users are being created in the correct OU, added to the correct department group, and given their home folder.
+
+### AD cleanup
+
+I cleaned up the layout a little so the parts I actually work in are easier to find.
+
+The main areas I care about now are:
+- Building
+- Security Groups
+- Servers
+- Service Accounts
+
+I left the default Active Directory containers like **Builtin**, **Users**, **Computers**, **Domain Controllers**, and **ForeignSecurityPrincipals** alone since they are part of the normal AD structure.
 
 ## September 24-25, 2026
 
