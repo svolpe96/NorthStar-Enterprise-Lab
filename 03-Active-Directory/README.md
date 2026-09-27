@@ -17,6 +17,9 @@ IP: **10.0.20.3**
 
 I'm separating normal users, servers, service accounts, and security groups so the domain is easier to work with.
 
+<img width="750" height="522" alt="security grops" src="https://github.com/user-attachments/assets/c113a4c0-71f9-45e4-81b4-cdf97bb440e7" />
+
+
 At the top level I mostly work in:
 
 - **Building**
@@ -37,6 +40,9 @@ The main department groups are:
 - **Human Resources**
 - **Executives**
 - **I.T**
+
+<img width="752" height="529" alt="Users" src="https://github.com/user-attachments/assets/1a2d01e6-bdc1-4cbc-ae47-22f25ae9b4ca" />
+
 
 When a new employee is created, they are added to their main department group.
 
