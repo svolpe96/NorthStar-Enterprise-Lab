@@ -56,7 +56,54 @@ I also used the ACL hit counters to confirm that the inter-VLAN deny rule was ma
 
 One useful mistake during the build was accidentally using the wrong wildcard mask on the internal deny. I first entered a wildcard that IOS interpreted as `any`, which would have blocked Shipping from everything. I corrected the destination to `10.0.0.0 0.255.255.255`, which matches the internal `10.0.0.0/8` space.
 
-Next step is to repeat the same design for Accounting, Human Resources, Executives, and I.T., then capture the completed ACL set for documentation.
+### User VLAN ACL rollout completed
+
+Finished the same base ACL design for all five user VLANs:
+
+- **SHIPPING-IN** on Vlan100
+- **ACCOUNTING-IN** on Vlan110
+- **HR-IN** on Vlan120
+- **EXECUTIVES-IN** on Vlan130
+- **IT-IN** on Vlan140
+
+Each ACL is applied inbound on its SVI and follows the same basic policy:
+
+- allow DHCP client requests
+- allow the VLAN to ping its own gateway
+- allow access to the Server VLAN at `10.0.20.0/24`
+- deny the rest of the internal `10.0.0.0/8` space
+- allow external / Internet destinations
+
+I tested the user VLANs and confirmed the segmentation works: normal user VLANs cannot initiate traffic to the other user VLANs, while Server VLAN and Internet access still work.
+
+### I.T. admin workstation exception
+
+Added a controlled exception for the I.T. admin workstation at **10.0.140.10**.
+
+In `IT-IN`, I added a permit before the normal internal deny so that this one host can initiate traffic to internal NorthStar networks:
+
+```cisco
+permit ip host 10.0.140.10 10.0.0.0 0.255.255.255
+```
+
+Because the ACLs are stateless, the other user VLAN ACLs also needed return-path exceptions before their internal deny rules.
+
+For Shipping, Accounting, Human Resources, and Executives I added:
+
+- ICMP `echo-reply` back to `10.0.140.10`
+- TCP traffic with the `established` keyword back to `10.0.140.10`
+
+This lets the I.T. admin workstation initiate ping and TCP sessions to the other user VLANs without allowing those VLANs to freely initiate new traffic toward I.T.
+
+I tested the exception in both directions and confirmed:
+
+- `10.0.140.10` can initiate traffic to the other user VLANs
+- the other user VLANs can return the allowed traffic
+- normal user VLAN clients still cannot initiate connections toward `10.0.140.10`
+
+The current exception only handles ICMP replies and established TCP return traffic. If an admin tool later needs UDP, I will add a specific UDP exception instead of broadly opening return traffic.
+
+At this point the **user VLAN ACL segmentation project is working**. Server VLAN and Management VLAN hardening will be treated as separate security work later.
 
 ## September 25-26, 2026
 
