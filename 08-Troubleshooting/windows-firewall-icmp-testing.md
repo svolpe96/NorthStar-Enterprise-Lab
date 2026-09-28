@@ -23,6 +23,7 @@ Because those SVI addresses were reachable, I knew the traffic was reaching CORE
 
 That narrowed the problem down to the endpoint side instead of the Layer 3 routing on the core.
 
+
 ## Root cause
 
 Windows Defender Firewall was blocking inbound ICMPv4 Echo Requests on the workstations.
