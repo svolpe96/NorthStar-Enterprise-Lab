@@ -1,7 +1,5 @@
 # Security
 
-I'm keeping this page limited to things I've actually configured or am actively working toward.
-
 ## In place now
 
 - SSH management on Cisco devices
@@ -47,6 +45,14 @@ Deny the rest of the internal 10.0.0.0/8 space
 Allow external destinations / Internet
 ~~~
 
+<img width="605" height="146" alt="completed SHIPPING ACL" src="https://github.com/user-attachments/assets/308c4da4-b4ab-4508-92c7-07583aa6645b" />
+<img width="621" height="148" alt="completed ACCOUNTING ACL" src="https://github.com/user-attachments/assets/dd2ef24b-3e8d-4651-9485-a01ade16584a" />
+<img width="594" height="142" alt="completed HR  ACL" src="https://github.com/user-attachments/assets/f7e05ec9-5812-4888-b6a1-9704d0530fec" />
+<img width="612" height="151" alt="completed EXECUTIVES ACL" src="https://github.com/user-attachments/assets/8f4e6c27-109f-4f08-a741-3a2b14a61418" />
+<img width="605" height="132" alt="completed IT acl in" src="https://github.com/user-attachments/assets/be6055bd-b6c9-4418-84a1-469329374622" />
+
+
+
 Applying the ACL inbound means traffic is checked as it enters CORESW1 from that user VLAN, before the core routes it somewhere else.
 
 ### Completed user VLAN ACLs
@@ -80,7 +86,13 @@ Vlan140 -> IT-IN
 
 I wanted one I.T. workstation, **10.0.140.10**, to be able to initiate administrative traffic to the other user VLANs while normal I.T. clients remain segmented.
 
+<img width="606" height="246" alt="IT matchine can ping outside matchines" src="https://github.com/user-attachments/assets/f44d5170-7e99-40fc-b10a-ead601134bc0" />
+
+
 I added this before the normal internal deny in `IT-IN`:
+
+<img width="605" height="132" alt="completed IT acl in" src="https://github.com/user-attachments/assets/1102d4e0-bab8-4b48-8ced-0985ec99b6ac" />
+
 
 ~~~cisco
 permit ip host 10.0.140.10 10.0.0.0 0.255.255.255
@@ -145,6 +157,11 @@ I tested the ACLs from the user VLANs and confirmed:
 - ACL deny entries showed matches during testing
 - the I.T. admin workstation at `10.0.140.10` can initiate traffic to Shipping, Accounting, Human Resources, and Executives
 - those VLANs still cannot initiate new traffic toward `10.0.140.10`
+
+<img width="606" height="246" alt="IT matchine can ping outside matchines" src="https://github.com/user-attachments/assets/e02b3585-9d17-4fb2-8df7-23dccda1ba60" />
+<img width="620" height="216" alt="non it matchine can ping it matchine" src="https://github.com/user-attachments/assets/aa72a0f3-093b-4787-af64-9066c0bd162b" />
+
+
 
 Before ACL testing, I also had to allow ICMPv4 Echo Requests through Windows Defender Firewall on the test clients so endpoint firewall behavior would not be confused with an ACL deny.
 
