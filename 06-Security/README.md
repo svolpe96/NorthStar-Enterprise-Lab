@@ -13,11 +13,11 @@
 
 ## Inter-VLAN ACLs
 
-I started adding traffic controls between the user VLANs.
+I added traffic controls between the user VLANs.
 
-The ACLs are being configured on **CORESW1** because that is where the VLAN SVIs and inter-VLAN routing live.
+The ACLs are configured on **CORESW1** because that is where the VLAN SVIs and inter-VLAN routing live.
 
-For now I am only applying ACLs to the user VLANs:
+The current ACL scope is the user VLANs:
 
 | VLAN | Department | Network | ACL |
 |---:|---|---|---|
@@ -27,7 +27,7 @@ For now I am only applying ACLs to the user VLANs:
 | 130 | Executives | 10.0.130.0/24 | EXECUTIVES-IN |
 | 140 | I.T | 10.0.140.0/24 | IT-IN |
 
-The Server and Management VLANs are not being filtered with their own ACLs yet. I want to get the user segmentation working first before tightening those networks.
+The Server and Management VLANs are not being filtered with their own ACLs yet. User VLAN segmentation is complete, and I will handle those networks separately later.
 
 ### ACL design
 
@@ -45,10 +45,24 @@ Deny the rest of the internal 10.0.0.0/8 space
 Allow external destinations / Internet
 ~~~
 
+**Shipping**
+
 <img width="605" height="146" alt="completed SHIPPING ACL" src="https://github.com/user-attachments/assets/308c4da4-b4ab-4508-92c7-07583aa6645b" />
+
+**Accounting**
+
 <img width="621" height="148" alt="completed ACCOUNTING ACL" src="https://github.com/user-attachments/assets/dd2ef24b-3e8d-4651-9485-a01ade16584a" />
+
+**Human Resources**
+
 <img width="594" height="142" alt="completed HR  ACL" src="https://github.com/user-attachments/assets/f7e05ec9-5812-4888-b6a1-9704d0530fec" />
+
+**Executives**
+
 <img width="612" height="151" alt="completed EXECUTIVES ACL" src="https://github.com/user-attachments/assets/8f4e6c27-109f-4f08-a741-3a2b14a61418" />
+
+**I.T.**
+
 <img width="605" height="132" alt="completed IT acl in" src="https://github.com/user-attachments/assets/be6055bd-b6c9-4418-84a1-469329374622" />
 
 
