@@ -17,6 +17,8 @@ This repo is a work in progress. I'm using it to keep track of what I've built, 
 - SSH management
 - NTP
 - PortFast / BPDU Guard on endpoint-facing ports
+- Inter-VLAN user segmentation with named extended ACLs
+- Controlled IT administrative access between user VLANs
 
 ### Windows / virtualization
 - **Proxmox** hosts the server VMs
@@ -64,7 +66,6 @@ Department groups are being used as the main entry point for permissions. Instea
 
 - branch connectivity
 - OSPF
-- inter-VLAN ACLs
 - wireless / VoIP
 - centralized logging and monitoring
 - backups / restore testing
