@@ -24,10 +24,10 @@ For now I am only applying ACLs to the user VLANs:
 | VLAN | Department | Network | ACL |
 |---:|---|---|---|
 | 100 | Shipping | 10.0.100.0/24 | SHIPPING-IN |
-| 110 | Accounting | 10.0.110.0/24 | planned |
-| 120 | Human Resources | 10.0.120.0/24 | planned |
-| 130 | Executives | 10.0.130.0/24 | planned |
-| 140 | I.T | 10.0.140.0/24 | planned |
+| 110 | Accounting | 10.0.110.0/24 | ACCOUNTING-IN |
+| 120 | Human Resources | 10.0.120.0/24 | HR-IN |
+| 130 | Executives | 10.0.130.0/24 | EXECUTIVES-IN |
+| 140 | I.T | 10.0.140.0/24 | IT-IN |
 
 The Server and Management VLANs are not being filtered with their own ACLs yet. I want to get the user segmentation working first before tightening those networks.
 
@@ -49,9 +49,11 @@ Allow external destinations / Internet
 
 Applying the ACL inbound means traffic is checked as it enters CORESW1 from that user VLAN, before the core routes it somewhere else.
 
-### Shipping
+### Completed user VLAN ACLs
 
-The first completed ACL is:
+The same base design is now configured on Shipping, Accounting, Human Resources, Executives, and I.T.
+
+Shipping is an example of the base policy:
 
 ~~~cisco
 ip access-list extended SHIPPING-IN
@@ -62,12 +64,49 @@ ip access-list extended SHIPPING-IN
  permit ip 10.0.100.0 0.0.0.255 any
 ~~~
 
-It is applied inbound on:
+The other user VLAN ACLs use the same logic with their own source subnet and gateway.
+
+Each ACL is applied inbound on its matching SVI:
+
+~~~text
+Vlan100 -> SHIPPING-IN
+Vlan110 -> ACCOUNTING-IN
+Vlan120 -> HR-IN
+Vlan130 -> EXECUTIVES-IN
+Vlan140 -> IT-IN
+~~~
+
+### I.T. admin exception
+
+I wanted one I.T. workstation, **10.0.140.10**, to be able to initiate administrative traffic to the other user VLANs while normal I.T. clients remain segmented.
+
+I added this before the normal internal deny in `IT-IN`:
 
 ~~~cisco
-interface Vlan100
- ip access-group SHIPPING-IN in
+permit ip host 10.0.140.10 10.0.0.0 0.255.255.255
 ~~~
+
+The other user VLAN ACLs need return-path exceptions because standard IOS ACLs are stateless.
+
+For example, `SHIPPING-IN` includes:
+
+~~~cisco
+permit icmp 10.0.100.0 0.0.0.255 host 10.0.140.10 echo-reply
+permit tcp 10.0.100.0 0.0.0.255 host 10.0.140.10 established
+~~~
+
+Accounting, Human Resources, and Executives use the same return-path pattern with their own source subnet.
+
+This allows:
+
+~~~text
+10.0.140.10 -> user VLAN             allowed to initiate
+ICMP echo-reply -> 10.0.140.10       allowed
+established TCP -> 10.0.140.10       allowed
+user VLAN -> new connection to I.T.  denied
+~~~
+
+I intentionally did not add a broad UDP return permit. If an administrative tool later requires UDP, I will add only the specific service that is needed.
 
 ### Why the DHCP rule is separate
 
@@ -97,15 +136,15 @@ Because ACLs are processed from top to bottom, the Server VLAN permit is matched
 
 ### Validation
 
-I tested the Shipping ACL from a workstation in VLAN 100.
+I tested the ACLs from the user VLANs and confirmed:
 
-Confirmed behavior:
-
-- Shipping can ping its own gateway
-- Shipping can reach DC01 in the Server VLAN
-- Shipping can reach the Internet
-- Shipping cannot ping workstations in the other user VLANs
-- the deny entry showed ACL matches during testing
+- each user VLAN can reach its own gateway
+- user VLANs can reach DC01 / the Server VLAN
+- Internet access still works
+- user VLANs cannot freely initiate traffic to the other user VLANs
+- ACL deny entries showed matches during testing
+- the I.T. admin workstation at `10.0.140.10` can initiate traffic to Shipping, Accounting, Human Resources, and Executives
+- those VLANs still cannot initiate new traffic toward `10.0.140.10`
 
 Before ACL testing, I also had to allow ICMPv4 Echo Requests through Windows Defender Firewall on the test clients so endpoint firewall behavior would not be confused with an ACL deny.
 
@@ -113,13 +152,14 @@ That troubleshooting note is here:
 
 [Windows Firewall Blocking Inter-VLAN Ping](../08-Troubleshooting/windows-firewall-icmp-testing.md)
 
-## Next ACL work
+## Next security work
 
-The same basic model will be built for:
+The user VLAN segmentation portion is complete and working.
 
-- Accounting
-- Human Resources
-- Executives
-- I.T
+Future security work can be handled separately, including:
 
-After the user VLAN ACLs are complete and tested, I can decide whether to further restrict Server and Management traffic and whether the Server VLAN permit should be narrowed to specific services instead of allowing the whole subnet.
+- decide whether the Server VLAN should be restricted to specific services instead of allowing the whole subnet
+- harden access to the Management VLAN
+- add service-specific UDP exceptions for the I.T. admin workstation only if an admin tool actually needs them
+- continue with additional Layer 2 security controls and monitoring
+
