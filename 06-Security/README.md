@@ -52,8 +52,6 @@ Applying the ACL inbound means traffic is checked as it enters CORESW1 from that
 
 ### Server access policy
 
-The first version of the ACLs allowed the entire Server VLAN. I later replaced that broad access with service-based rules.
-
 Current server addresses:
 
 | Server | Address | Access |
@@ -63,7 +61,7 @@ Current server addresses:
 | HR onboarding site on FS01 | 10.0.20.4 TCP 80 | Human Resources and I.T. only |
 | Proxmox | 10.0.20.10 | dedicated I.T. admin workstation only |
 
-For now I allow full IP access from the user VLANs to **DC01** instead of trying to individually permit every Active Directory service. Domain clients rely on several services and RPC ranges, so I would rather keep domain operations stable and narrow that further in a separate hardening phase.
+User VLANs are allowed full IP access to **DC01** for normal Active Directory/domain services. Domain clients rely on several services and RPC ranges, so DC01 is treated as an approved infrastructure host while the rest of the Server VLAN remains restricted.
 
 All user VLANs are allowed to reach **FS01 over TCP 445** for SMB/file shares.
 
@@ -213,6 +211,5 @@ Future security work can be handled separately, including:
 
 - control traffic initiated from the Server VLAN
 - harden access to the Management VLAN
-- narrow DC01 access to specific AD services if I decide the added complexity is worthwhile
 - add service-specific UDP exceptions for the I.T. admin workstation only if an admin tool actually needs them
 - continue with additional Layer 2 security controls and monitoring
