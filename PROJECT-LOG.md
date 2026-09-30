@@ -2,6 +2,49 @@
 
 This is just a running log of what I'm working on and problems I run into. It is not meant to be polished documentation.
 
+
+## September 29, 2026
+
+### Server access ACL hardening
+
+Went back to the user VLAN ACLs and tightened access to the Server VLAN. The original ACL design allowed each user VLAN to reach the entire `10.0.20.0/24` Server VLAN. That worked for the first segmentation phase, but it was broader than I wanted.
+
+The goal for this phase was to keep normal domain and file services working while limiting each VLAN to the servers and services it actually needs.
+
+Current server policy:
+
+- **DC01 - 10.0.20.3**: allowed from all user VLANs for normal Active Directory/domain services
+- **FS01 - 10.0.20.4 TCP 445**: allowed from all user VLANs for SMB/file shares
+- **FS01 - TCP 80 onboarding site**: allowed only from Human Resources and I.T.
+- **Proxmox - 10.0.20.10**: blocked from normal user and I.T. clients
+- **I.T. admin workstation - 10.0.140.10**: retains administrative access to internal networks, including Proxmox
+
+For Shipping, Accounting, and Executives, I replaced the broad Server VLAN permit with:
+
+```text
+allow -> DC01
+allow -> FS01 TCP 445
+deny  -> remaining Server VLAN
+```
+
+Human Resources gets the same policy plus TCP 80 to FS01 for the onboarding site.
+
+I.T. also gets SMB and onboarding access, but the existing `10.0.140.10` admin exception is placed before the Server VLAN deny. This lets the dedicated admin workstation reach Proxmox while other I.T. clients are blocked.
+
+During the Accounting change I ran into a sequence-number issue where IOS reported unused sequence numbers as duplicates. I resequenced `ACCOUNTING-IN` and then rebuilt the entries in the correct order.
+
+Validation completed successfully:
+
+- normal domain services still work
+- SMB to FS01 works on TCP 445
+- the onboarding site works from HR and I.T.
+- the onboarding site is blocked from the other user VLANs
+- Proxmox management is blocked from normal clients
+- Proxmox remains reachable from `10.0.140.10`
+- inter-VLAN segmentation and Internet access still work
+
+At this point the **user VLAN ACL project is complete for both department segmentation and user-to-server access control**. Server-originated traffic controls and Management VLAN hardening can be handled as separate projects later.
+
 ## September 27, 2026
 
 ### Inter-VLAN ACL project
