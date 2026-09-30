@@ -202,3 +202,18 @@ Future security work can be handled separately, including:
 - narrow DC01 access to specific AD services if I decide the added complexity is worthwhile
 - add service-specific UDP exceptions for the I.T. admin workstation only if an admin tool actually needs them
 - continue with additional Layer 2 security controls and monitoring
+
+
+
+
+
+<img width="1289" height="632" alt="hr onboarding acl proof" src="https://github.com/user-attachments/assets/aee4a280-3a0b-49a6-8c76-f15d34e45437" />
+<img width="596" height="180" alt="HR acl complete" src="https://github.com/user-attachments/assets/e98072e2-470b-4dbf-9cc9-1605319ed161" />
+<img width="582" height="169" alt="executives acl complete" src="https://github.com/user-attachments/assets/36efa13a-7b03-4e1a-952d-4b45fb9711ea" />
+<img width="896" height="550" alt="accounting test-netconnection pass and fail" src="https://github.com/user-attachments/assets/a2ca033d-28e5-48ed-8980-5f26af2af26f" />
+<img width="584" height="168" alt="accounting acl complete" src="https://github.com/user-attachments/assets/dff0d507-6701-47bb-b60c-8a97289b84d7" />
+<img width="885" height="571" alt="shipping test-netconnection pass and fail" src="https://github.com/user-attachments/assets/e60954a1-3bc3-4d7f-9c52-63af6721cd22" />
+<img width="596" height="185" alt="shipping acl complete" src="https://github.com/user-attachments/assets/788b0605-ae02-41a8-8860-ab8d339c6f4c" />
+<img width="1014" height="560" alt="proxmox proof" src="https://github.com/user-attachments/assets/0c1c9804-c719-492a-8c85-1811418d5f20" />
+<img width="1365" height="631" alt="proxmox not allowed" src="https://github.com/user-attachments/assets/d185aad1-0d72-4fd9-9ab2-a0c130715806" />
+<img width="536" height="171" alt="IT acl in" src="https://github.com/user-attachments/assets/2e17e757-9e2f-44ab-97f5-3cd6dc151a69" />
