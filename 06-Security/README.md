@@ -202,14 +202,3 @@ Before ACL testing, I also had to allow ICMPv4 Echo Requests through Windows Def
 That troubleshooting note is here:
 
 [Windows Firewall Blocking Inter-VLAN Ping](../08-Troubleshooting/windows-firewall-icmp-testing.md)
-
-## Next security work
-
-The **user VLAN ACL project is complete**, including both department segmentation and user-to-server access controls.
-
-Future security work can be handled separately, including:
-
-- control traffic initiated from the Server VLAN
-- harden access to the Management VLAN
-- add service-specific UDP exceptions for the I.T. admin workstation only if an admin tool actually needs them
-- continue with additional Layer 2 security controls and monitoring
