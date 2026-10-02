@@ -16,13 +16,13 @@ The policy is now in place on:
 - CORESW1
 - ASW1
 - ASW2
-- HQ router
+- NY router
 
 The VTY lines use local authentication and only accept SSH. I tested from the admin workstation and from non-admin clients to make sure the management restriction works in both directions.
 
-The HQ router needed some extra work. It was still running SSH version 1, so I changed it to SSHv2 and generated a 2048-bit RSA key pair.
+The NY router needed some extra work. It was still running SSH version 1, so I changed it to SSHv2 and generated a 2048-bit RSA key pair.
 
-After that, Windows OpenSSH still ran into compatibility problems with the older IOS SSH implementation. CORESW1 required legacy SHA-1 Diffie-Hellman / RSA compatibility, and the HQ router also required the older `hmac-sha1` MAC option. I kept those compatibility changes scoped to the individual SSH commands instead of weakening the Windows SSH client globally.
+After that, Windows OpenSSH still ran into compatibility problems with the older IOS SSH implementation. CORESW1 required legacy SHA-1 Diffie-Hellman / RSA compatibility, and the NY router also required the older `hmac-sha1` MAC option. I kept those compatibility changes scoped to the individual SSH commands instead of weakening the Windows SSH client globally.
 
 Full troubleshooting note:
 
