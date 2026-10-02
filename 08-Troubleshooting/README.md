@@ -7,7 +7,7 @@ I'm keeping track of notable problems I run into while building this environment
 - [Proxmox VLAN tagging mismatch](proxmox-vlan-tagging.md)
 - [FS01 time / secure-channel failure](fs01-time-secure-channel.md)
 - [Windows Firewall blocking inter-VLAN ping](windows-firewall-icmp-testing.md)
-- [SSH key exchange compatibility on CORESW1](ssh-key-exchange-compatibility.md)
+- [SSH cryptographic compatibility on older Cisco IOS](ssh-key-exchange-compatibility.md)
 - old access switch hardware failure / rebuild - still need to write this one up
 
 For each issue I'm trying to keep:
