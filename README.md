@@ -6,6 +6,9 @@ This repo is a work in progress. I'm using it to keep track of what I've built, 
 
 ## Current setup
 
+<img width="1536" height="1024" alt="NorthStar Network Topology and VLAN Layout" src="https://github.com/user-attachments/assets/e3a102b3-fd1a-4086-bf2d-51d3cf1b4dda" />
+
+
 ### Network
 - CORESW1 handles Layer 3 routing for the lab
 - ASW1 and ASW2 are Layer 2 access switches
