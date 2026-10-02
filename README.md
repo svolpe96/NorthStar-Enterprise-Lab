@@ -17,11 +17,13 @@ This repo is a work in progress. I'm using it to keep track of what I've built, 
 - LACP EtherChannels
 - NAT/PAT
 - DHCP relay
-- SSH management
+- SSH management restricted to a dedicated I.T. admin workstation
 - NTP
 - PortFast / BPDU Guard on endpoint-facing ports
 - Inter-VLAN user segmentation with named extended ACLs
-- Controlled IT administrative access between user VLANs
+- Service-based access controls into the Server VLAN
+- Server VLAN ACLs controlling server-originated traffic
+- Dedicated I.T. admin access to internal management services, including Proxmox
 
 ### Windows / virtualization
 - **Proxmox** hosts the server VMs
