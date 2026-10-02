@@ -65,11 +65,11 @@ That allowed the SSH connection to proceed successfully from the dedicated admin
 
 I also tested SSH from a non-admin VLAN workstation and confirmed that the VTY ACL blocked it as intended.
 
-## HQ router - SSH version and MAC compatibility
+## NY router - SSH version and MAC compatibility
 
 ### First symptom - SSH protocol version mismatch
 
-When I moved to the HQ router at **10.255.255.1**, the first SSH attempt failed with:
+When I moved to the NY router at **10.255.255.1**, the first SSH attempt failed with:
 
 ~~~text
 Protocol major versions differ: 2 vs. 1
@@ -103,7 +103,7 @@ This showed that routing, TCP 22, the VTY access path, SSHv2, key exchange, and 
 
 ### Root cause
 
-The older IOS version on the HQ router only offered SHA-1 based HMAC algorithms that current Windows OpenSSH does not enable by default.
+The older IOS version on the NY router only offered SHA-1 based HMAC algorithms that current Windows OpenSSH does not enable by default.
 
 ### Compatibility command
 
