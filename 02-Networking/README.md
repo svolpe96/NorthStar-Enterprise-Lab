@@ -12,15 +12,15 @@ I'm using CORESW1 for the Layer 3 side of the lab and keeping ASW1/ASW2 as Layer
 - LACP EtherChannels to the access switches
 - 802.1Q trunks
 - DHCP relay to DC01
-- default route toward the HQ router
-- NAT/PAT on the HQ router
+- default route toward the NY router
+- NAT/PAT on the NY router
 - SSH management
 - NTP
 - PortFast and BPDU Guard on endpoint ports
 
 ## Core routing
 
-CORESW1 has IP routing enabled and uses the HQ router as the default route:
+CORESW1 has IP routing enabled and uses the NY router as the default route:
 
 ```cisco
 ip routing
