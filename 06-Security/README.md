@@ -295,3 +295,11 @@ I tested the Server VLAN policy and confirmed:
 - a normal user workstation cannot reach the Proxmox management interface
 
 This adds server-originated traffic control without changing the existing user-to-server service policy.
+
+
+<img width="652" height="175" alt="Vlan 20 server in acl" src="https://github.com/user-attachments/assets/2f892b70-526e-405b-b228-58cc4d11e066" />
+<img width="755" height="199" alt="Test-NetConnection from admin matchine to proxmox" src="https://github.com/user-attachments/assets/45312898-3159-407c-93c2-5a306acc1ce7" />
+<img width="636" height="233" alt="show ip interface Vlan20" src="https://github.com/user-attachments/assets/264426ad-79d0-426d-a3d9-0ebfc79a58af" />
+<img width="907" height="323" alt="ping 192 168 1 1 from FS01" src="https://github.com/user-attachments/assets/a701d92a-9ac8-4eb3-83df-a9bd6e217420" />
+<img width="797" height="215" alt="ping 10 0 100 1 from FS01" src="https://github.com/user-attachments/assets/fd7dc8ac-06cb-45be-9e6e-37554e8f9447" />
+
