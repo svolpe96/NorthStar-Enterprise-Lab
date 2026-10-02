@@ -251,6 +251,8 @@ interface Vlan20
  ip access-group SERVER-IN in
 ~~~
 
+<img width="636" height="233" alt="SERVER-IN applied inbound on Vlan20" src="https://github.com/user-attachments/assets/264426ad-79d0-426d-a3d9-0ebfc79a58af" />
+
 This controls traffic as it leaves the Server VLAN and enters CORESW1 for routing toward other networks.
 
 ### Current SERVER-IN policy
@@ -264,6 +266,8 @@ This controls traffic as it leaves the Server VLAN and enters CORESW1 for routin
 40 deny ip 10.0.20.0 0.0.0.255 10.0.0.0 0.255.255.255
 50 permit ip 10.0.20.0 0.0.0.255 any
 ~~~
+
+<img width="652" height="175" alt="Final SERVER-IN ACL" src="https://github.com/user-attachments/assets/2f892b70-526e-405b-b228-58cc4d11e066" />
 
 The policy is intentionally ordered so the home network deny is evaluated before the broader DC01 permit.
 
@@ -288,18 +292,21 @@ I tested the Server VLAN policy and confirmed:
 
 - a normal user workstation can still reach FS01 over SMB/TCP 445
 - FS01 cannot initiate traffic to the home network at 192.168.1.0/24
+
+<img width="907" height="323" alt="FS01 blocked from reaching the home LAN" src="https://github.com/user-attachments/assets/a701d92a-9ac8-4eb3-83df-a9bd6e217420" />
+
 - the home-network deny entry increments its match counter during testing
 - FS01 cannot initiate traffic toward another internal NorthStar VLAN
+
+<img width="797" height="215" alt="FS01 blocked from initiating toward a user VLAN" src="https://github.com/user-attachments/assets/fd7dc8ac-06cb-45be-9e6e-37554e8f9447" />
+
 - the internal 10.0.0.0/8 deny entry matches the blocked server-originated traffic
 - the dedicated admin workstation at 10.0.140.10 can still reach Proxmox on TCP 8006
+
+<img width="755" height="199" alt="Dedicated IT admin workstation can reach Proxmox on TCP 8006" src="https://github.com/user-attachments/assets/45312898-3159-407c-93c2-5a306acc1ce7" />
+
 - a normal user workstation cannot reach the Proxmox management interface
 
 This adds server-originated traffic control without changing the existing user-to-server service policy.
 
-
-<img width="652" height="175" alt="Vlan 20 server in acl" src="https://github.com/user-attachments/assets/2f892b70-526e-405b-b228-58cc4d11e066" />
-<img width="755" height="199" alt="Test-NetConnection from admin matchine to proxmox" src="https://github.com/user-attachments/assets/45312898-3159-407c-93c2-5a306acc1ce7" />
-<img width="636" height="233" alt="show ip interface Vlan20" src="https://github.com/user-attachments/assets/264426ad-79d0-426d-a3d9-0ebfc79a58af" />
-<img width="907" height="323" alt="ping 192 168 1 1 from FS01" src="https://github.com/user-attachments/assets/a701d92a-9ac8-4eb3-83df-a9bd6e217420" />
-<img width="797" height="215" alt="ping 10 0 100 1 from FS01" src="https://github.com/user-attachments/assets/fd7dc8ac-06cb-45be-9e6e-37554e8f9447" />
 
