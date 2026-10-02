@@ -3,6 +3,58 @@
 This is just a running log of what I'm working on and problems I run into. It is not meant to be polished documentation.
 
 
+## October 1, 2026
+
+### Management-plane SSH hardening
+
+Finished locking down remote SSH management of the Cisco infrastructure.
+
+Created a standard named ACL called **VTY-MGMT** that only permits the dedicated I.T. admin workstation at **10.0.140.10**, then applied it to the VTY lines with `access-class`.
+
+The policy is now in place on:
+
+- CORESW1
+- ASW1
+- ASW2
+- HQ router
+
+The VTY lines use local authentication and only accept SSH. I tested from the admin workstation and from non-admin clients to make sure the management restriction works in both directions.
+
+The HQ router needed some extra work. It was still running SSH version 1, so I changed it to SSHv2 and generated a 2048-bit RSA key pair.
+
+After that, Windows OpenSSH still ran into compatibility problems with the older IOS SSH implementation. CORESW1 required legacy SHA-1 Diffie-Hellman / RSA compatibility, and the HQ router also required the older `hmac-sha1` MAC option. I kept those compatibility changes scoped to the individual SSH commands instead of weakening the Windows SSH client globally.
+
+Full troubleshooting note:
+
+[SSH Cryptographic Compatibility on Older Cisco IOS](08-Troubleshooting/ssh-key-exchange-compatibility.md)
+
+### Server VLAN hardening
+
+Built a separate inbound ACL for the Server VLAN called **SERVER-IN** and applied it to **Vlan20**.
+
+The goal was to control traffic that servers initiate toward internal networks without breaking the user-to-server access controls that were already working.
+
+Current policy:
+
+- block all Server VLAN hosts from initiating traffic into my home network at **192.168.1.0/24**
+- allow **DC01 - 10.0.20.3** to communicate with internal NorthStar networks and external destinations
+- allow **FS01 - 10.0.20.4** to send established TCP return traffic toward internal clients
+- allow **Proxmox - 10.0.20.10** to return established TCP and ICMP echo-reply traffic only to the dedicated admin workstation at **10.0.140.10**
+- block remaining Server VLAN traffic from initiating into the internal **10.0.0.0/8** space
+- allow remaining traffic toward external destinations
+
+One important ACL-ordering detail came up while building it. I originally placed the home-network deny below the broad DC01 permit. That would have allowed DC01 to match the earlier permit and bypass the home-network restriction. I moved the home-network deny to sequence 5 so it is evaluated before the DC01 permit.
+
+Validation completed successfully:
+
+- user workstation -> FS01 TCP 445 still works
+- FS01 -> 192.168.1.1 fails, and the home-network deny counter increases
+- FS01 -> Shipping gateway fails, confirming the internal deny
+- 10.0.140.10 -> Proxmox TCP 8006 works
+- normal user -> Proxmox TCP 8006 remains blocked by the existing user VLAN ACLs
+
+This completes the current Server VLAN traffic-control phase while keeping domain, file-share, and administrative access working.
+
 ## September 29, 2026
 
 ### Server access ACL hardening
