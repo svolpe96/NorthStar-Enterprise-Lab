@@ -6,7 +6,7 @@ This repo is a work in progress. I'm using it to keep track of what I've built, 
 
 ## Current setup
 
-<img width="1536" height="1024" alt="NorthStar Network Topology and VLAN Layout" src="https://github.com/user-attachments/assets/e3a102b3-fd1a-4086-bf2d-51d3cf1b4dda" />
+<img width="1200" alt="NorthStar physical enterprise environment" src="https://github.com/user-attachments/assets/02263361-6f1f-4de6-9fb4-b68c126f9874" />
 
 
 ### Network
