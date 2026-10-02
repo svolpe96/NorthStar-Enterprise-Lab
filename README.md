@@ -9,7 +9,7 @@ This repo is a work in progress. I'm using it to keep track of what I've built, 
 ### Network
 - CORESW1 handles Layer 3 routing for the lab
 - ASW1 and ASW2 are Layer 2 access switches
-- HQ router provides the path out to my home network / Internet
+- NY router provides the path out to my home network / Internet
 - Rapid PVST+
 - LACP EtherChannels
 - NAT/PAT
