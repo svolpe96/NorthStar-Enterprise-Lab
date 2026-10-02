@@ -5,6 +5,7 @@
 - SSH management on Cisco devices
 - SSH v2
 - RSA keys for SSH
+- VTY access restricted to the dedicated I.T. admin workstation
 - separate management VLAN
 - PortFast on endpoint access ports
 - BPDU Guard on endpoint access ports
@@ -13,6 +14,41 @@
 - inter-VLAN user segmentation with named extended ACLs
 - service-based access controls into the Server VLAN
 - dedicated I.T. admin workstation exception
+- inbound Server VLAN ACL controlling server-originated traffic
+- Server VLAN blocked from initiating traffic into the home LAN
+
+## Management plane / SSH
+
+Remote management of the Cisco infrastructure is restricted to the dedicated I.T. admin workstation at **10.0.140.10**.
+
+A standard named ACL is applied directly to the VTY lines with `access-class`, so the restriction applies to SSH management regardless of which routed interface address is targeted.
+
+~~~cisco
+ip access-list standard VTY-MGMT
+ remark Dedicated IT admin workstation only
+ permit host 10.0.140.10
+ deny any
+
+line vty 0 15
+ access-class VTY-MGMT in
+ login local
+ transport input ssh
+~~~
+
+The same VTY management policy is in place on:
+
+- CORESW1
+- ASW1
+- ASW2
+- HQ router
+
+SSH version 2 and RSA keys are used for remote management. The HQ router uses SSHv2 with a 2048-bit RSA key pair.
+
+I tested management access from the dedicated admin workstation and confirmed that non-admin clients are denied.
+
+Some of the older Cisco IOS code in the lab only offers legacy SSH cryptographic algorithms. I documented that separately because it was an SSH compatibility problem rather than an ACL or routing problem:
+
+[SSH Cryptographic Compatibility on Older Cisco IOS](../08-Troubleshooting/ssh-key-exchange-compatibility.md)
 
 ## Inter-VLAN ACLs
 
@@ -202,3 +238,60 @@ Before ACL testing, I also had to allow ICMPv4 Echo Requests through Windows Def
 That troubleshooting note is here:
 
 [Windows Firewall Blocking Inter-VLAN Ping](../08-Troubleshooting/windows-firewall-icmp-testing.md)
+
+
+## Server VLAN hardening
+
+The Server VLAN is **Vlan20 / 10.0.20.0/24**.
+
+I added a named extended ACL called **SERVER-IN** and applied it inbound on the Vlan20 SVI:
+
+~~~cisco
+interface Vlan20
+ ip access-group SERVER-IN in
+~~~
+
+This controls traffic as it leaves the Server VLAN and enters CORESW1 for routing toward other networks.
+
+### Current SERVER-IN policy
+
+~~~cisco
+5 deny ip 10.0.20.0 0.0.0.255 192.168.1.0 0.0.0.255
+10 permit ip host 10.0.20.3 any
+20 permit tcp host 10.0.20.4 10.0.0.0 0.255.255.255 established
+30 permit tcp host 10.0.20.10 host 10.0.140.10 established
+32 permit icmp host 10.0.20.10 host 10.0.140.10 echo-reply
+40 deny ip 10.0.20.0 0.0.0.255 10.0.0.0 0.255.255.255
+50 permit ip 10.0.20.0 0.0.0.255 any
+~~~
+
+The policy is intentionally ordered so the home network deny is evaluated before the broader DC01 permit.
+
+Current behavior:
+
+| Source | Allowed behavior |
+|---|---|
+| Any Server VLAN host | blocked from initiating traffic into the home LAN at 192.168.1.0/24 |
+| DC01 - 10.0.20.3 | allowed to communicate with internal NorthStar networks and external destinations |
+| FS01 - 10.0.20.4 | allowed to send established TCP return traffic toward internal clients |
+| Proxmox - 10.0.20.10 | allowed to return established TCP and ICMP echo-reply traffic to 10.0.140.10 |
+| Other Server VLAN traffic | blocked from initiating into the internal 10.0.0.0/8 space |
+| Remaining Server VLAN traffic | allowed toward external destinations |
+
+DC01 remains broadly permitted after the home-network deny because Active Directory, DNS, DHCP, Kerberos, and RPC dependencies make it an infrastructure host in the current design.
+
+The `established` keyword is still a stateless ACL check based on TCP ACK/RST flags. It allows expected return TCP traffic without creating a state table.
+
+### Validation
+
+I tested the Server VLAN policy and confirmed:
+
+- a normal user workstation can still reach FS01 over SMB/TCP 445
+- FS01 cannot initiate traffic to the home network at 192.168.1.0/24
+- the home-network deny entry increments its match counter during testing
+- FS01 cannot initiate traffic toward another internal NorthStar VLAN
+- the internal 10.0.0.0/8 deny entry matches the blocked server-originated traffic
+- the dedicated admin workstation at 10.0.140.10 can still reach Proxmox on TCP 8006
+- a normal user workstation cannot reach the Proxmox management interface
+
+This adds server-originated traffic control without changing the existing user-to-server service policy.
