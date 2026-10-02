@@ -9,7 +9,7 @@ This is the current layout of NorthStar.
 
 - **CORESW1** - Layer 3 core switch and default gateway for the VLANs
 - **ASW1 / ASW2** - Layer 2 access switches
-- **HQ router** - connects the lab toward the home network / Internet
+- **NY router** - connects the lab toward the home network / Internet
 - **Branch router** - planned for later
 - **Proxmox** - hosts the server VMs
 - **DC01** - Active Directory, DNS, DHCP, Group Policy
@@ -20,12 +20,12 @@ This is the current layout of NorthStar.
 
 The client VLANs use SVIs on CORESW1 as their default gateways.
 
-CORESW1 sends default traffic to the HQ router over the transit network:
+CORESW1 sends default traffic to the NY router over the transit network:
 
-- HQ router: **10.255.255.1**
+- NY router: **10.255.255.1**
 - CORESW1: **10.255.255.2**
 
-The HQ router then handles NAT/PAT out toward my home network.
+The NY router then handles NAT/PAT out toward my home network.
 
 # IP Addressing Plan
 
@@ -48,7 +48,7 @@ The HQ router then handles NAT/PAT out toward my home network.
 
 ## Transit network
 
-- HQ router: **10.255.255.1/30**
+- NY router: **10.255.255.1/30**
 - CORESW1: **10.255.255.2/30**
 
 
