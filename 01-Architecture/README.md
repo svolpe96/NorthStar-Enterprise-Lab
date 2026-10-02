@@ -2,7 +2,7 @@
 
 This is the current layout of NorthStar.
 
-<img width="4000" height="2252" alt="lab" src="https://github.com/user-attachments/assets/02263361-6f1f-4de6-9fb4-b68c126f9874" />
+<img width="1200" alt="NorthStar network topology and VLAN layout" src="https://github.com/user-attachments/assets/e3a102b3-fd1a-4086-bf2d-51d3cf1b4dda" />
 
 
 ## Main pieces
