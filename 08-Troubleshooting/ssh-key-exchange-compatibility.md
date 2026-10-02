@@ -136,3 +136,11 @@ Authentication / login
 Reading the exact error message made it possible to tell which stage was failing instead of assuming every SSH problem was caused by routing or an ACL.
 
 The client-side legacy overrides are useful for this lab because the Cisco hardware is running older IOS code. In a production environment, the better solution would be to use supported software and hardware capable of modern SSH cryptography rather than relying on SHA-1 based algorithms.
+
+
+<img width="1066" height="427" alt="NorthStarNY ssh fail" src="https://github.com/user-attachments/assets/ff0c6ac3-0382-4323-aff0-c014d455d8a5" />
+<img width="1064" height="85" alt="NorthStarNY no mac for ssh" src="https://github.com/user-attachments/assets/3debcb85-3098-4374-b42b-70dcb741eceb" />
+<img width="1075" height="110" alt="ssh working" src="https://github.com/user-attachments/assets/4adb4b41-b309-46a3-9db2-fcad7d033b3f" />
+<img width="1104" height="191" alt="ssh algo fail" src="https://github.com/user-attachments/assets/728f24c5-5273-475f-ae49-596ad4ab0e7d" />
+<img width="1105" height="173" alt="NorthStarNY ssh working" src="https://github.com/user-attachments/assets/b27a245c-22b9-42bc-b6b3-6a44b5748b94" />
+
