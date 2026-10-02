@@ -21,6 +21,8 @@ Unable to negotiate with 10.0.10.1 port 22: no matching key exchange method foun
 Their offer: diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1
 ~~~
 
+<img width="1104" height="191" alt="CORESW1 SSH key-exchange negotiation failure" src="https://github.com/user-attachments/assets/728f24c5-5273-475f-ae49-596ad4ab0e7d" />
+
 The VTY ACL itself was not the problem because the switch was clearly responding to the SSH negotiation.
 
 ### What I checked
@@ -63,6 +65,8 @@ ssh -oKexAlgorithms=+diffie-hellman-group14-sha1 -oHostKeyAlgorithms=+ssh-rsa st
 
 That allowed the SSH connection to proceed successfully from the dedicated admin workstation.
 
+<img width="1075" height="110" alt="CORESW1 SSH working from the dedicated admin workstation" src="https://github.com/user-attachments/assets/4adb4b41-b309-46a3-9db2-fcad7d033b3f" />
+
 I also tested SSH from a non-admin VLAN workstation and confirmed that the VTY ACL blocked it as intended.
 
 ## NY router - SSH version and MAC compatibility
@@ -75,6 +79,8 @@ When I moved to the NY router at **10.255.255.1**, the first SSH attempt failed 
 Protocol major versions differ: 2 vs. 1
 banner exchange: Connection to 10.255.255.1 port 22: could not read protocol version
 ~~~
+
+<img width="1066" height="427" alt="NY router SSH protocol-version failure" src="https://github.com/user-attachments/assets/ff0c6ac3-0382-4323-aff0-c014d455d8a5" />
 
 The router was still using SSH version 1.
 
@@ -99,6 +105,8 @@ Unable to negotiate with 10.255.255.1 port 22: no matching MAC found.
 Their offer: hmac-sha1,hmac-sha1-96
 ~~~
 
+<img width="1064" height="85" alt="NY router SSH MAC algorithm negotiation failure" src="https://github.com/user-attachments/assets/3debcb85-3098-4374-b42b-70dcb741eceb" />
+
 This showed that routing, TCP 22, the VTY access path, SSHv2, key exchange, and the host key were getting far enough for the client and router to negotiate message authentication.
 
 ### Root cause
@@ -114,6 +122,8 @@ ssh -oKexAlgorithms=+diffie-hellman-group14-sha1 -oHostKeyAlgorithms=+ssh-rsa -o
 ~~~
 
 This keeps the legacy compatibility change scoped to the individual SSH command instead of weakening the Windows SSH client globally.
+
+<img width="1105" height="173" alt="NY router SSH working with the required compatibility options" src="https://github.com/user-attachments/assets/b27a245c-22b9-42bc-b6b3-6a44b5748b94" />
 
 ## Takeaway
 
@@ -136,11 +146,3 @@ Authentication / login
 Reading the exact error message made it possible to tell which stage was failing instead of assuming every SSH problem was caused by routing or an ACL.
 
 The client-side legacy overrides are useful for this lab because the Cisco hardware is running older IOS code. In a production environment, the better solution would be to use supported software and hardware capable of modern SSH cryptography rather than relying on SHA-1 based algorithms.
-
-
-<img width="1066" height="427" alt="NorthStarNY ssh fail" src="https://github.com/user-attachments/assets/ff0c6ac3-0382-4323-aff0-c014d455d8a5" />
-<img width="1064" height="85" alt="NorthStarNY no mac for ssh" src="https://github.com/user-attachments/assets/3debcb85-3098-4374-b42b-70dcb741eceb" />
-<img width="1075" height="110" alt="ssh working" src="https://github.com/user-attachments/assets/4adb4b41-b309-46a3-9db2-fcad7d033b3f" />
-<img width="1104" height="191" alt="ssh algo fail" src="https://github.com/user-attachments/assets/728f24c5-5273-475f-ae49-596ad4ab0e7d" />
-<img width="1105" height="173" alt="NorthStarNY ssh working" src="https://github.com/user-attachments/assets/b27a245c-22b9-42bc-b6b3-6a44b5748b94" />
-
