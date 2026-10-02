@@ -40,9 +40,9 @@ The same VTY management policy is in place on:
 - CORESW1
 - ASW1
 - ASW2
-- HQ router
+- NY router
 
-SSH version 2 and RSA keys are used for remote management. The HQ router uses SSHv2 with a 2048-bit RSA key pair.
+SSH version 2 and RSA keys are used for remote management. The NY router uses SSHv2 with a 2048-bit RSA key pair.
 
 I tested management access from the dedicated admin workstation and confirmed that non-admin clients are denied.
 
