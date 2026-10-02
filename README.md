@@ -61,7 +61,6 @@ Department groups are being used as the main entry point for permissions. Instea
 - [Security](06-Security/README.md)
 - [Proxmox](07-Proxmox/README.md)
 - [Troubleshooting](08-Troubleshooting/README.md)
-- [Device Configs](09-Configs/README.md)
 - [HR Onboarding](10-HR-Onboarding/README.md)
 - [Project log](PROJECT-LOG.md)
 
