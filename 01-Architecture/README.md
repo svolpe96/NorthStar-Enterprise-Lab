@@ -9,8 +9,9 @@ This is the current layout of NorthStar.
 
 - **CORESW1** - Layer 3 core switch and default gateway for the VLANs
 - **ASW1 / ASW2** - Layer 2 access switches
-- **NY router** - connects the lab toward the home network / Internet
-- **Branch router** - planned for later
+- **NY router** - New York site edge router and path toward the home network / Internet
+- **FL router** - remote Florida site router
+- **ISP container** - lightweight routed provider simulation between NY and FL
 - **Proxmox** - hosts the server VMs
 - **DC01** - Active Directory, DNS, DHCP, Group Policy
 - **FS01** - file server
@@ -26,6 +27,8 @@ CORESW1 sends default traffic to the NY router over the transit network:
 - CORESW1: **10.255.255.2**
 
 The NY router then handles NAT/PAT out toward my home network.
+
+NY and FL are also connected through a simulated ISP underlay with a GRE tunnel between the site routers. The detailed WAN build is documented in [Multi-Site WAN](../11-Multi-Site-WAN/README.md).
 
 # IP Addressing Plan
 
@@ -46,10 +49,19 @@ The NY router then handles NAT/PAT out toward my home network.
 - FS01: **10.0.20.4**
 - Proxmox: **10.0.20.10**
 
-## Transit network
+## NY-to-core transit network
 
-- NY router: **10.255.255.1/30**
-- CORESW1: **10.255.255.2/30**
+- NY router: **10.255.255.1/24**
+- CORESW1: **10.255.255.2/24**
+
+## Multi-site WAN
+
+- NY WAN: **203.0.113.2/30**
+- ISP NY side: **203.0.113.1/30**
+- FL WAN: **198.51.100.2/30**
+- ISP FL side: **198.51.100.1/30**
+- NY GRE Tunnel0: **10.255.254.1/30**
+- FL GRE Tunnel0: **10.255.254.2/30**
 
 
 ## Addressing Reasoning
