@@ -7,6 +7,7 @@ A physical enterprise-style environment I built to design, secure, automate, and
 ## What I Built
 
 - Cisco Layer 3 / Layer 2 network with VLANs, SVIs, 802.1Q trunks, LACP EtherChannels, Rapid PVST+, NAT/PAT, DHCP relay, SSH, and NTP
+- Simulated NY-to-FL WAN using a routed ISP segment and GRE tunnel
 - Inter-VLAN segmentation using named extended ACLs
 - Service-based access controls into the Server VLAN and ACLs controlling server-originated traffic
 - Dedicated I.T. admin workstation for restricted infrastructure management and Proxmox access
@@ -30,7 +31,9 @@ A physical enterprise-style environment I built to design, secure, automate, and
 
 - **CORESW1** handles Layer 3 routing and the VLAN SVIs
 - **ASW1 / ASW2** operate as Layer 2 access switches
-- **NY router** provides the path toward the home network / Internet
+- **NY router** provides the path toward the home network / Internet and acts as the New York site edge
+- **FL router** represents the remote Florida site
+- a lightweight **ISP** container in Proxmox provides the simulated provider network between NY and FL
 - SSH management is restricted to a dedicated I.T. admin workstation
 - User VLANs are segmented with inbound named extended ACLs
 - Server access is restricted by service, with separate controls on server-originated traffic
@@ -75,12 +78,12 @@ Department groups are used as the main entry point for permissions, with resourc
 - [Proxmox](07-Proxmox/README.md)
 - [Troubleshooting](08-Troubleshooting/README.md)
 - [HR Onboarding](10-HR-Onboarding/README.md)
+- [Multi-Site WAN](11-Multi-Site-WAN/README.md)
 - [Project Log](PROJECT-LOG.md)
 
 ## Planned Expansion
 
-- branch connectivity
-- OSPF
+- OSPF across the NY-FL GRE tunnel
 - wireless / VoIP
 - centralized logging and monitoring
 - backups / restore testing
