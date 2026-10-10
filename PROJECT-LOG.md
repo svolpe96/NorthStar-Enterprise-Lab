@@ -2,6 +2,38 @@
 
 This is a quick running log of what I worked on, ideas I tried, and problems I ran into. The detailed technical documentation lives in the individual project folders.
 
+## October 9-10, 2026
+
+### Built the NY-to-FL simulated WAN and GRE tunnel
+
+Started the multi-site portion of NorthStar.
+
+Instead of directly connecting the New York and Florida routers with one Ethernet cable, I built a small simulated ISP so the two routers behave more like separate geographic sites.
+
+The provider side now uses:
+
+- VLAN 901 for the NY-to-ISP circuit
+- VLAN 902 for the FL-to-ISP circuit
+- a lightweight Debian LXC container in Proxmox acting as the ISP router
+- separate /30 WAN networks on each side
+
+I converted the Proxmox switchport to a trunk while keeping VLAN 20 native so existing Proxmox management stayed online. The Proxmox bridge was also made VLAN-aware so the ISP container could connect to both WAN VLANs.
+
+After proving that both routers could reach each other through the ISP, I built a GRE tunnel between NY and FL:
+
+- NY Tunnel0: 10.255.254.1/30
+- FL Tunnel0: 10.255.254.2/30
+
+The GRE tunnel is up and passing traffic.
+
+One useful issue came up while assigning the tunnel addresses. I originally planned to use 10.255.255.4/30, but IOS rejected it as overlapping with NY GigabitEthernet0/1. Checking the existing interface showed that the NY-to-core link is actually configured as 10.255.255.1/24, not /30. I left the existing link alone and moved the GRE tunnel to 10.255.254.0/30 instead.
+
+The WAN underlay and GRE overlay are complete. The next step is OSPF across Tunnel0.
+
+Full write-up:
+
+[Multi-Site WAN](11-Multi-Site-WAN/README.md)
+
 ## October 1, 2026
 
 ### Management and server hardening
