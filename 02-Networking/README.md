@@ -17,6 +17,8 @@ I'm using CORESW1 for the Layer 3 side of the lab and keeping ASW1/ASW2 as Layer
 - SSH management
 - NTP
 - PortFast and BPDU Guard on endpoint ports
+- simulated NY-to-FL WAN through a routed ISP container
+- GRE tunnel between NY and FL
 
 ## Core routing
 
@@ -40,3 +42,20 @@ ip helper-address 10.0.20.3
 I'm running Rapid PVST+ and keeping CORESW1 as the root for the lab VLANs.
 
 One thing I had to clean up during the rebuild was PortFast/BPDU Guard placement. I only want those on real endpoint-facing access ports, not switch or router uplinks.
+
+## Multi-site WAN
+
+NY and FL now use separate simulated WAN circuits instead of a direct router-to-router cable.
+
+A lightweight Debian LXC container in Proxmox acts as the ISP between VLAN 901 and VLAN 902, and a GRE tunnel provides the private overlay between the two Cisco routers.
+
+Current tunnel addresses:
+
+- NY Tunnel0: **10.255.254.1/30**
+- FL Tunnel0: **10.255.254.2/30**
+
+The underlay and GRE tunnel have been tested successfully in both directions.
+
+Detailed build notes: [Multi-Site WAN](../11-Multi-Site-WAN/README.md)
+
+The next step is OSPF across Tunnel0.
