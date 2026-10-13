@@ -28,7 +28,7 @@ CORESW1 sends default traffic to the NY router over the transit network:
 
 The NY router then handles NAT/PAT out toward my home network.
 
-NY and FL are also connected through a simulated ISP underlay with a GRE tunnel between the site routers. The detailed WAN build is documented in [Multi-Site WAN](../11-Multi-Site-WAN/README.md).
+NY and FL are also connected through a simulated ISP underlay with a GRE tunnel between the site routers. OSPF Area 0 is now running across the GRE tunnel and between NY and CORESW1. The detailed WAN build is documented in [Multi-Site WAN](../11-Multi-Site-WAN/README.md).
 
 # IP Addressing Plan
 
