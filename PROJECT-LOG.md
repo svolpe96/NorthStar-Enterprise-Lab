@@ -4,6 +4,18 @@ This is a quick running log of what I worked on, ideas I tried, and problems I r
 
 ## October 12, 2026
 
+### Completed NY/FL OSPF routing and tested tunnel recovery
+
+Finished advertising the five NY department VLANs into OSPF and confirmed FL learned all five through the GRE tunnel. FL also successfully reached the HR VLAN gateway.
+
+I wanted to go one step further and ping an actual HR workstation. That initially failed. I found an old persistent default route on the Windows client and removed it, then added a scoped Windows Firewall ICMP rule. The ping still failed until I checked the `HR-IN` ACL on CORESW1. Its broad `10.0.0.0/8` deny was blocking the Echo Reply back to Florida. I added a host-specific ICMP reply permit above the deny and confirmed the ping worked.
+
+I also shut down NY's Tunnel0 for a controlled OSPF test. FL's neighbor and its specific OSPF route disappeared, while the CORESW1 adjacency stayed FULL. A route lookup fell back to the existing broader static `10.0.0.0/8` route. I brought Tunnel0 back up and the Florida connection returned.
+
+Florida is only meant to be a remote routing test site, not a fully built branch office. The remaining work is documentation and any future routing/security improvements I choose to practice.
+
+Details: [Multi-Site WAN](11-Multi-Site-WAN/README.md) and [ACL troubleshooting](08-Troubleshooting/fl-to-hr-acl-return-traffic.md).
+
 ### OSPF across the NY / FL multi-site design
 
 Started the dynamic-routing phase of the NY-to-FL project.
@@ -30,7 +42,7 @@ NY and FL successfully formed an OSPF adjacency across the GRE tunnel. CORESW1 a
 
 I am using passive-interface default and only allowing the actual router-to-router links to form neighbors.
 
-The next step is intentionally small: advertise Shipping VLAN 100 first and confirm FL learns 10.0.100.0/24 through OSPF. Once that path is proven, I can advertise the other required NY networks.
+At this stage I planned to advertise Shipping first, verify the route, and then add the remaining NY networks. I completed that later in the same session (see above).
 
 I also separated routing from security in the design. OSPF will tell the routers how to reach the remote networks, while ACLs or firewall policy will still decide which departments and services are allowed to communicate between sites.
 
