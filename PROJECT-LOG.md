@@ -2,6 +2,42 @@
 
 This is a quick running log of what I worked on, ideas I tried, and problems I ran into. The detailed technical documentation lives in the individual project folders.
 
+## October 12, 2026
+
+### OSPF across the NY / FL multi-site design
+
+Started the dynamic-routing phase of the NY-to-FL project.
+
+I chose OSPF even though static routing would be enough for the current two-site environment. The reason is scalability: I want NorthStar to be able to grow beyond NY and FL without having to maintain static routes everywhere. It also gives me hands-on experience with OSPF neighbors, route advertisement, path selection, and troubleshooting.
+
+Current OSPF router IDs:
+
+- NY: 1.1.1.1
+- FL: 2.2.2.2
+- CORESW1: 3.3.3.3
+
+FL now has a test internal network represented by Loopback10 at 10.1.10.1/24. I set the loopback OSPF network type to point-to-point so it can represent the full 10.1.10.0/24 Florida LAN instead of being advertised only as a /32.
+
+OSPF process 1 is running in Area 0.
+
+The current neighbor path is:
+
+~~~text
+CORESW1 <-> NY <-> GRE Tunnel0 <-> FL
+~~~
+
+NY and FL successfully formed an OSPF adjacency across the GRE tunnel. CORESW1 and NY also formed an OSPF adjacency across the existing 10.255.255.0/24 routed link.
+
+I am using passive-interface default and only allowing the actual router-to-router links to form neighbors.
+
+The next step is intentionally small: advertise Shipping VLAN 100 first and confirm FL learns 10.0.100.0/24 through OSPF. Once that path is proven, I can advertise the other required NY networks.
+
+I also separated routing from security in the design. OSPF will tell the routers how to reach the remote networks, while ACLs or firewall policy will still decide which departments and services are allowed to communicate between sites.
+
+Full write-up:
+
+[Multi-Site WAN](11-Multi-Site-WAN/README.md)
+
 ## October 9-10, 2026
 
 ### Built the NY-to-FL simulated WAN and GRE tunnel
