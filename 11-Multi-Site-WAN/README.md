@@ -115,10 +115,120 @@ IOS rejected it because the existing NY-to-core interface is actually configured
 
 Instead of changing the existing NY-to-core link during the WAN build, I moved the GRE tunnel to the separate `10.255.254.0/30` network.
 
+## OSPF
+
+I chose OSPF even though static routes would be sufficient for the current two-site design. The goal is to make the environment easier to scale as more networks or sites are added and to get hands-on experience with dynamic routing, neighbor relationships, route advertisement, path selection, and troubleshooting.
+
+I also chose OSPF because it is an open-standard link-state routing protocol rather than a vendor-specific protocol.
+
+### Current OSPF design
+
+~~~text
+NY VLANs
+   |
+CORESW1
+RID 3.3.3.3
+   |
+   | OSPF Area 0
+   |
+NY
+RID 1.1.1.1
+   |
+   | OSPF Area 0 over GRE Tunnel0
+   |
+FL
+RID 2.2.2.2
+   |
+FL test LAN
+10.1.10.0/24
+~~~
+
+OSPF process **1** is being used throughout the internal NorthStar routing domain.
+
+The router-to-router links are non-passive, while `passive-interface default` is used so user-facing networks can be advertised without trying to form OSPF neighbors with endpoints.
+
+### FL test LAN
+
+I created `Loopback10` on FL to represent an internal Florida network:
+
+~~~cisco
+interface Loopback10
+ description FL-LAN
+ ip address 10.1.10.1 255.255.255.0
+ ip ospf network point-to-point
+~~~
+
+The point-to-point OSPF network type is intentional. Cisco normally advertises a loopback as a /32, so this lets the simulated Florida LAN be advertised as the full `10.1.10.0/24` network.
+
+### FL OSPF
+
+~~~cisco
+router ospf 1
+ router-id 2.2.2.2
+ passive-interface default
+ no passive-interface Tunnel0
+
+interface Tunnel0
+ ip ospf 1 area 0
+
+interface Loopback10
+ ip ospf 1 area 0
+~~~
+
+### NY OSPF
+
+NY uses router ID **1.1.1.1**.
+
+OSPF is active on:
+
+- `Tunnel0` toward FL
+- `GigabitEthernet0/1` toward CORESW1
+
+Both links are explicitly made non-passive.
+
+### CORESW1 OSPF
+
+CORESW1 uses router ID **3.3.3.3**.
+
+OSPF is active on the existing routed transit interface toward NY:
+
+- `GigabitEthernet1/0/25`
+- address: `10.255.255.2/24`
+- Area 0
+
+The NY side of that same link is `10.255.255.1/24`.
+
+### Current validation
+
+The following has been confirmed:
+
+- NY and FL can ping each other across the GRE tunnel
+- NY and FL have formed an OSPF adjacency across `Tunnel0`
+- NY sees FL as router ID `2.2.2.2`
+- CORESW1 and NY have formed an OSPF adjacency across their routed transit link
+- the WAN underlay remains separate from the internal OSPF routing domain
+
+At this point the OSPF neighbor relationships are working. The next step is route advertisement testing.
+
+I am intentionally starting with a single NY VLAN first instead of advertising every VLAN at once. That makes it easier to prove the full route path works before expanding the configuration.
+
+The first test will be Shipping:
+
+- VLAN 100
+- `10.0.100.0/24`
+
+The goal is to confirm that FL learns `10.0.100.0/24` dynamically through:
+
+~~~text
+CORESW1 -> NY -> GRE Tunnel0 -> FL
+~~~
+
+Once that works, I can add the other required NY networks.
+
+OSPF provides reachability information; it does not replace security policy. ACLs or firewall rules will still control which departments or services are actually allowed to communicate between sites.
+
 ## Next step
 
-The WAN underlay and GRE overlay are working.
-
-The next phase is to run **OSPF across Tunnel0** so the NY and FL sites can dynamically exchange their internal routes.
+Advertise VLAN 100 from CORESW1, verify the OSPF route appears on FL, then expand the advertisements to the other required internal networks.
 
 IPsec can be added afterward if I want to encrypt the GRE traffic across the simulated provider network.
