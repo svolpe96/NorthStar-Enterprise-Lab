@@ -198,37 +198,70 @@ OSPF is active on the existing routed transit interface toward NY:
 
 The NY side of that same link is `10.255.255.1/24`.
 
-### Current validation
+### NY department routes advertised
 
-The following has been confirmed:
+After confirming the adjacencies, I enabled OSPF Area 0 on the five department SVIs on CORESW1. I kept the user-facing SVIs passive: their networks are advertised, but they do not try to form OSPF neighbors with workstations.
 
-- NY and FL can ping each other across the GRE tunnel
-- NY and FL have formed an OSPF adjacency across `Tunnel0`
-- NY sees FL as router ID `2.2.2.2`
-- CORESW1 and NY have formed an OSPF adjacency across their routed transit link
-- the WAN underlay remains separate from the internal OSPF routing domain
+| VLAN | Department | Advertised network |
+|---:|---|---|
+| 100 | Shipping | `10.0.100.0/24` |
+| 110 | Accounting | `10.0.110.0/24` |
+| 120 | Human Resources | `10.0.120.0/24` |
+| 130 | Executives | `10.0.130.0/24` |
+| 140 | IT | `10.0.140.0/24` |
 
-At this point the OSPF neighbor relationships are working. The next step is route advertisement testing.
+The relevant interface-level configuration follows this pattern:
 
-I am intentionally starting with a single NY VLAN first instead of advertising every VLAN at once. That makes it easier to prove the full route path works before expanding the configuration.
+```cisco
+interface Vlan120
+ ip ospf 1 area 0
+```
 
-The first test will be Shipping:
+On FL, `show ip route ospf` confirmed all five networks were learned through `10.255.254.1` on `Tunnel0`. The NY-to-core transit network `10.255.255.0/24` was also advertised. On NY, the Florida test LAN appeared as an intra-area OSPF route:
 
-- VLAN 100
-- `10.0.100.0/24`
+```text
+10.1.10.0/24
+Known via "ospf 1", distance 110, metric 1001
+via 10.255.254.2, Tunnel0
+```
 
-The goal is to confirm that FL learns `10.0.100.0/24` dynamically through:
+### End-to-end test and ACL troubleshooting
 
-~~~text
-CORESW1 -> NY -> GRE Tunnel0 -> FL
-~~~
+I first confirmed FL could ping the HR VLAN gateway at `10.0.120.1` using `Loopback10` as the source. Then I tested a real Windows 11 HR workstation at `10.0.120.51`.
 
-Once that works, I can add the other required NY networks.
+The workstation initially had an incorrect persistent default route toward `10.0.10.1`, alongside its correct DHCP gateway `10.0.120.1`. I removed the incorrect persistent route. I also allowed ICMPv4 Echo Requests from `10.1.10.1` through Windows Defender Firewall, but the ping still failed.
 
-OSPF provides reachability information; it does not replace security policy. ACLs or firewall rules will still control which departments or services are actually allowed to communicate between sites.
+The remaining issue was the inbound `HR-IN` ACL on CORESW1. Florida's Echo Request could reach HR, but the HR workstation's Echo Reply entered the VLAN 120 SVI and hit the existing deny for destinations in `10.0.0.0/8`. Florida's `10.1.10.1` address is inside that range.
 
-## Next step
+I added a narrow exception **before** the broad deny:
 
-Advertise VLAN 100 from CORESW1, verify the OSPF route appears on FL, then expand the advertisements to the other required internal networks.
+```cisco
+ip access-list extended HR-IN
+ 85 permit icmp host 10.0.120.51 host 10.1.10.1 echo-reply
+```
 
-IPsec can be added afterward if I want to encrypt the GRE traffic across the simulated provider network.
+After that change, the FL-to-HR workstation ping succeeded. I kept the exception limited to this host, remote source, and ICMP reply type rather than opening general access between sites. This is a test-specific allowance, not a finished inter-site security policy.
+
+More detail: [FL-to-HR ping blocked by ACL](../08-Troubleshooting/fl-to-hr-acl-return-traffic.md).
+
+### OSPF withdrawal and recovery test
+
+To see how OSPF responds to a lost tunnel, I checked the NY router's neighbors and route table, then temporarily shut down `Tunnel0`.
+
+Before the shutdown, NY showed:
+
+- FL neighbor `2.2.2.2` in `FULL` state on `Tunnel0`
+- CORESW1 neighbor `3.3.3.3` in `FULL` state
+- `10.1.10.0/24` learned via OSPF through `10.255.254.2`
+
+With `Tunnel0` shut down, FL disappeared from the OSPF neighbor table and the specific `10.1.10.0/24` OSPF route was withdrawn. CORESW1 remained a FULL neighbor. A lookup for `10.1.10.0` then matched the existing broader static `10.0.0.0/8` route via `10.255.255.2`. That is a fallback routing-table match, **not** proof that Florida was still reachable.
+
+I restored the tunnel with `no shutdown`, and the Florida connection came back. The final neighbor and route output should be captured as a screenshot for the repository.
+
+This test demonstrates neighbor loss and route withdrawal on the existing single path. There is no redundant WAN path, so I am not calling this a failover test.
+
+## Current scope and possible later work
+
+The simulated FL site only needs to demonstrate WAN connectivity and routing. I am not building out a Florida workstation or full branch-office infrastructure right now.
+
+Possible later improvements include GRE encryption with IPsec, more deliberate inter-site access controls, and route design review. Those are **not implemented** as part of this project.
