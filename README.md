@@ -8,7 +8,7 @@ A physical enterprise-style environment I built to design, secure, automate, and
 
 - Cisco Layer 3 / Layer 2 network with VLANs, SVIs, 802.1Q trunks, LACP EtherChannels, Rapid PVST+, NAT/PAT, DHCP relay, SSH, and NTP
 - Simulated NY-to-FL WAN using a routed ISP segment and GRE tunnel
-- OSPF Area 0 adjacencies established between CORESW1, NY, and FL
+- OSPF Area 0 routing between CORESW1, NY, and FL, with department route advertisement and tunnel recovery testing
 - Inter-VLAN segmentation using named extended ACLs
 - Service-based access controls into the Server VLAN and ACLs controlling server-originated traffic
 - Dedicated I.T. admin workstation for restricted infrastructure management and Proxmox access
@@ -84,7 +84,6 @@ Department groups are used as the main entry point for permissions, with resourc
 
 ## Planned Expansion
 
-- finish OSPF route advertisement and end-to-end NY/FL testing
 - wireless / VoIP
 - centralized logging and monitoring
 - backups / restore testing

@@ -81,6 +81,6 @@ FL also has a test internal network represented by `Loopback10`:
 
 The loopback uses OSPF point-to-point network behavior so the full /24 can be advertised instead of only a /32 host route.
 
-The next step is to advertise one NY VLAN first, verify that FL learns it dynamically, and then roll the remaining required internal routes into OSPF.
+I advertised all five NY department VLANs (100, 110, 120, 130, and 140) and verified that FL learned their /24 networks dynamically through the GRE tunnel. NY also learned FL's simulated 10.1.10.0/24 LAN. I tested OSPF route withdrawal by shutting down NY Tunnel0 and restoring it afterward. The FL-to-HR endpoint test also exposed a return-traffic ACL issue, which I fixed with a narrowly scoped permit.
 
 Detailed build notes: [Multi-Site WAN](../11-Multi-Site-WAN/README.md)

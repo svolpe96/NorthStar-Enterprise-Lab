@@ -214,6 +214,18 @@ matches the internal `10.0.0.0/8` address space.
 
 Approved traffic is permitted above that line. Everything else destined for an internal NorthStar network is denied before the final external permit.
 
+### Florida-to-HR return-traffic exception
+
+While validating OSPF over the NY/FL GRE tunnel, I found that the inbound `HR-IN` ACL blocked ICMP Echo Replies from HR workstation `10.0.120.51` to FL test address `10.1.10.1`. The broad internal `10.0.0.0/8` deny also covers the Florida test network.
+
+I inserted this narrow exception before that deny:
+
+~~~cisco
+85 permit icmp host 10.0.120.51 host 10.1.10.1 echo-reply
+~~~
+
+The FL-to-HR ping then worked. This permits the tested reply only; it does not open general site-to-site traffic. See [FL-to-HR ACL troubleshooting](../08-Troubleshooting/fl-to-hr-acl-return-traffic.md).
+
 ### Validation
 
 I tested the ACLs and confirmed:
