@@ -4,6 +4,7 @@ I'm keeping track of notable problems I run into while building this environment
 
 ## Current write-ups
 
+- [Florida-to-HR ping blocked by ACL return-traffic filtering](fl-to-hr-acl-return-traffic.md)
 - [Proxmox VLAN tagging mismatch](proxmox-vlan-tagging.md)
 - [FS01 time / secure-channel failure](fs01-time-secure-channel.md)
 - [Windows Firewall blocking inter-VLAN ping](windows-firewall-icmp-testing.md)
