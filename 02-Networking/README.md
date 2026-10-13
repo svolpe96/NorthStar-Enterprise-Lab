@@ -19,6 +19,8 @@ I'm using CORESW1 for the Layer 3 side of the lab and keeping ASW1/ASW2 as Layer
 - PortFast and BPDU Guard on endpoint ports
 - simulated NY-to-FL WAN through a routed ISP container
 - GRE tunnel between NY and FL
+- OSPF Area 0 adjacency between NY and FL over GRE
+- OSPF Area 0 adjacency between CORESW1 and NY
 
 ## Core routing
 
@@ -58,4 +60,27 @@ The underlay and GRE tunnel have been tested successfully in both directions.
 
 Detailed build notes: [Multi-Site WAN](../11-Multi-Site-WAN/README.md)
 
-The next step is OSPF across Tunnel0.
+## OSPF
+
+OSPF process 1 is now running through the multi-site path.
+
+Current router IDs:
+
+- CORESW1: **3.3.3.3**
+- NY: **1.1.1.1**
+- FL: **2.2.2.2**
+
+NY and FL have formed a full OSPF adjacency across `Tunnel0`, and CORESW1 has formed a full adjacency with NY across the existing routed transit link.
+
+I am using `passive-interface default` and only making the actual router-to-router links non-passive. This keeps OSPF from trying to form neighbor relationships on user-facing networks.
+
+FL also has a test internal network represented by `Loopback10`:
+
+- FL LAN: **10.1.10.0/24**
+- Loopback10: **10.1.10.1/24**
+
+The loopback uses OSPF point-to-point network behavior so the full /24 can be advertised instead of only a /32 host route.
+
+The next step is to advertise one NY VLAN first, verify that FL learns it dynamically, and then roll the remaining required internal routes into OSPF.
+
+Detailed build notes: [Multi-Site WAN](../11-Multi-Site-WAN/README.md)
