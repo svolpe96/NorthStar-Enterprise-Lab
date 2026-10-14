@@ -1,6 +1,6 @@
 # NorthStar Enterprise Environment
 
-A physical enterprise-style environment I built to design, secure, automate, and troubleshoot infrastructure across Cisco networking, Windows Server, Active Directory, virtualization, and security. Alongside this, I'm building a separate Azure environment that I plan to connect to NorthStar as part of a hybrid on-premises/cloud design. - [Azure Environment](https://github.com/svolpe96/NorthStar-Azure-Environment-)
+A physical enterprise-style environment I built to design, secure, automate, and troubleshoot infrastructure across Cisco networking, Windows Server, Active Directory, virtualization, and security. Alongside this, I'm building a separate Azure environment that I plan to connect to NorthStar as part of a hybrid on-premises/cloud design.  [Azure Environment](https://github.com/svolpe96/NorthStar-Azure-Environment-)
 
 <img width="1200" alt="NorthStar physical enterprise environment" src="https://github.com/user-attachments/assets/02263361-6f1f-4de6-9fb4-b68c126f9874" />
 
