@@ -80,6 +80,7 @@ Department groups are used as the main entry point for permissions, with resourc
 - [Troubleshooting](08-Troubleshooting/README.md)
 - [HR Onboarding](10-HR-Onboarding/README.md)
 - [Multi-Site WAN](11-Multi-Site-WAN/README.md)
+- [Azure Environment](https://github.com/svolpe96/NorthStar-Azure-Environment-)
 - [Project Log](PROJECT-LOG.md)
 
 ## Planned Expansion
