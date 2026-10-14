@@ -1,6 +1,6 @@
 # NorthStar Enterprise Environment
 
-A physical enterprise-style environment I built to design, secure, automate, and troubleshoot infrastructure across Cisco networking, Windows Server, Active Directory, virtualization, and security.
+A physical enterprise-style environment I built to design, secure, automate, and troubleshoot infrastructure across Cisco networking, Windows Server, Active Directory, virtualization, and security. along side this im building my azure environment that I will eventually connect to my on prem site - [Azure Environment](https://github.com/svolpe96/NorthStar-Azure-Environment-)
 
 <img width="1200" alt="NorthStar physical enterprise environment" src="https://github.com/user-attachments/assets/02263361-6f1f-4de6-9fb4-b68c126f9874" />
 
@@ -80,7 +80,6 @@ Department groups are used as the main entry point for permissions, with resourc
 - [Troubleshooting](08-Troubleshooting/README.md)
 - [HR Onboarding](10-HR-Onboarding/README.md)
 - [Multi-Site WAN](11-Multi-Site-WAN/README.md)
-- [Azure Environment](https://github.com/svolpe96/NorthStar-Azure-Environment-)
 - [Project Log](PROJECT-LOG.md)
 
 ## Planned Expansion
